@@ -46,6 +46,19 @@ $navItems = [
 $activeKey = $activePage ?? '';
 ?>
 
+<style>
+.custom-nav-dropdown .dropdown-item {
+    transition: all 0.2s ease;
+}
+.custom-nav-dropdown .dropdown-item:hover {
+    background-color: rgba(230, 57, 70, 0.1) !important;
+    color: #ffffff !important;
+}
+.custom-nav-dropdown .dropdown-item:active {
+    background-color: #e63946 !important;
+}
+</style>
+
 <div class="navbar-container">
     <nav class="navbar navbar-expand-lg glass-nav">
         <div class="container-fluid">
@@ -87,13 +100,31 @@ $activeKey = $activePage ?? '';
                         Sign In
                     </a>
                     
-                    <!-- Logged In Options -->
-                    <span class="nav-user-badge" id="nav-user-badge" style="display: none;">
-                        <i class="bi bi-person-fill me-1"></i> <span id="nav-username">Name</span> (<span id="nav-userrole">Role</span>)
-                    </span>
-                    <button onclick="logout()" class="btn btn-pill btn-crimson btn-sm" id="nav-btn-signout" style="display: none;">
-                        <i class="bi bi-box-arrow-right me-1"></i> Sign Out
-                    </button>
+                    <!-- Logged In Options: Dropdown menu -->
+                    <div class="dropdown" id="nav-user-dropdown" style="display: none;">
+                        <button class="btn btn-pill btn-outline-light dropdown-toggle d-flex align-items-center gap-2 text-white border-white-50 btn-sm" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background: rgba(255, 255, 255, 0.05);">
+                            <i class="bi bi-person-circle"></i>
+                            <span id="nav-username">Name</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 custom-nav-dropdown" aria-labelledby="userDropdown" style="background: #111827; border-radius: 12px; margin-top: 10px;">
+                            <li>
+                                <a class="dropdown-item text-white d-flex align-items-center gap-2 py-2 px-3" href="user/profile.php">
+                                    <i class="bi bi-person-gear text-danger"></i> Edit Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-white d-flex align-items-center gap-2 py-2 px-3" href="user/dashboard.php">
+                                    <i class="bi bi-speedometer2 text-danger"></i> Dashboard
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                            <li>
+                                <button onclick="logout()" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2 px-3 w-100 border-0 bg-transparent text-start">
+                                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,24 +184,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Toggle Auth Buttons
+    // Toggle Auth Buttons / Dropdown
     const btnSignIn = document.getElementById('nav-btn-signin');
-    const badgeUser = document.getElementById('nav-user-badge');
-    const btnSignOut = document.getElementById('nav-btn-signout');
+    const dropdownUser = document.getElementById('nav-user-dropdown');
     const spanName = document.getElementById('nav-username');
-    const spanRole = document.getElementById('nav-userrole');
     const authSection = document.getElementById('nav-auth-section');
 
     if (isLoggedIn) {
         if (spanName) spanName.textContent = userName;
-        if (spanRole) spanRole.textContent = userRole.toUpperCase();
-        if (badgeUser) badgeUser.style.display = 'inline-block';
-        if (btnSignOut) btnSignOut.style.display = 'inline-block';
+        
+        // Dynamically update dropdown links based on role
+        const profileLink = dropdownUser.querySelector('a[href*="profile.php"]');
+        const dashboardLink = dropdownUser.querySelector('a[href*="dashboard.php"]');
+        
+        if (userRole === 'admin' || userRole === 'updater') {
+            if (profileLink) profileLink.href = 'admin/profile.php';
+            if (dashboardLink) dashboardLink.href = 'admin/dashboard.php';
+        } else {
+            if (profileLink) profileLink.href = 'user/profile.php';
+            if (dashboardLink) dashboardLink.href = 'user/dashboard.php';
+        }
+        
+        if (dropdownUser) dropdownUser.style.display = 'block';
         if (btnSignIn) btnSignIn.style.display = 'none';
         if (authSection) authSection.classList.add('logged-in');
     } else {
-        if (badgeUser) badgeUser.style.display = 'none';
-        if (btnSignOut) btnSignOut.style.display = 'none';
+        if (dropdownUser) dropdownUser.style.display = 'none';
         if (btnSignIn) btnSignIn.style.display = 'inline-block';
         if (authSection) authSection.classList.remove('logged-in');
     }
