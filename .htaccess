@@ -1,0 +1,8 @@
+# Enable CGIPassAuth to ensure Authorization header is passed to PHP
+CGIPassAuth On
+
+# Fallback: Rewrite rule to map Authorization header to HTTP_AUTHORIZATION
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
