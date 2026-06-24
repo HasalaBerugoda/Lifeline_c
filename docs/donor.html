@@ -1,0 +1,246 @@
+
+
+<!-- Block guest access early -->
+<script>
+const auth = checkAuth(['donor', 'updater', 'admin']);
+</script>
+
+<div class="hero-header">
+    
+    <h1 class="hero-title">Donor Dashboard</h1>
+    <p class="hero-subtitle">Thank you for being a part of LifeLine. Here is your medical contribution summary.</p>
+</div>
+
+<div class="container overlap-container">
+    <div class="row g-4">
+        <!-- Sidebar Profile Card -->
+        <div class="col-lg-4 d-flex flex-column">
+            <div class="premium-card text-center h-100">
+                <div class="mx-auto bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <i class="bi bi-person-fill fs-1"></i>
+                </div>
+                
+                <h3 class="font-heading mb-1" id="dash-fullname">Loading...</h3>
+                <p class="text-secondary mb-3" id="dash-email">...</p>
+                
+                <span class="badge bg-danger rounded-pill px-3 py-2 mb-4 fs-6" id="dash-bloodtype">...</span>
+
+                <hr class="my-4">
+                
+                <!-- Donor Info Grid -->
+                <div class="row text-start g-3 mb-4">
+                    <div class="col-6">
+                        <small class="text-uppercase text-secondary font-weight-bold" style="font-size: 11px;">Donor Number</small>
+                        <p class="mb-0 fw-bold text-dark" id="dash-donor-number">...</p>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-uppercase text-secondary font-weight-bold" style="font-size: 11px;">Phone</small>
+                        <p class="mb-0 fw-bold text-dark" id="dash-phone">...</p>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-uppercase text-secondary font-weight-bold" style="font-size: 11px;">Registered Location</small>
+                        <p class="mb-0 fw-bold text-dark" id="dash-location">...</p>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-2">
+                    <a href="donor-profile.html" class="btn btn-pill btn-outline-crimson btn-sm"><i class="bi bi-pencil-square me-1"></i> Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Stats & Actions -->
+        <div class="col-lg-8">
+            <div class="row g-4 mb-4">
+                <!-- Stat Cards -->
+                <div class="col-sm-4">
+                    <div class="premium-card text-center h-100">
+                        <div class="card-title-icon"><i class="bi bi-droplet-half"></i></div>
+                        <div class="stat-number" id="impact-count">0</div>
+                        <div class="stat-label">Total Donations</div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="premium-card text-center h-100">
+                        <div class="card-title-icon"><i class="bi bi-funnel-fill"></i></div>
+                        <div class="stat-number" id="impact-volume">0 ml</div>
+                        <div class="stat-label">Volume Donated</div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="premium-card text-center h-100">
+                        <div class="card-title-icon"><i class="bi bi-award-fill"></i></div>
+                        <div class="stat-number" id="impact-lives">0</div>
+                        <div class="stat-label">Estimated Lives Saved</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donation Eligibility Status Card -->
+            <div class="premium-card mb-4 position-relative overflow-hidden" id="eligibility-card" style="display: none;">
+                <!-- Checked top-right badge -->
+                <div id="eligibility-badge" class="position-absolute" style="top: 24px; right: 24px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold;">
+                </div>
+                
+                <div class="ps-3 border-start border-4" id="eligibility-container" style="border-color: #198754 !important;">
+                    <small class="text-uppercase fw-bold" id="eligibility-subtitle" style="color: #198754; font-size: 12px; letter-spacing: 1px;">Donation Status</small>
+                    <h2 class="font-heading my-2 text-dark" id="eligibility-title" style="font-size: 28px;">You are Eligible!</h2>
+                    <p class="text-secondary mb-4" id="eligibility-desc" style="max-width: 80%; font-size: 14px;">
+                        It has been over 120 days since your last donation. You are fully recovered and safe to donate blood again.
+                    </p>
+                    <a href="donation-camps.html" class="btn btn-pill btn-crimson px-4 py-2 fs-6" id="eligibility-btn">Find a Camp Near You</a>
+                </div>
+            </div>
+
+            <!-- Donation Impact & Options Row -->
+            <div class="row g-4">
+                <!-- Donation Impact Box -->
+                <div class="col-md-6">
+                    <div class="premium-card h-100">
+                        <h3 class="mb-3 font-heading text-dark border-bottom pb-2">Donation Impact Summary</h3>
+                        <p class="text-secondary" style="font-size: 13px; line-height: 1.6;">
+                            Your blood donations act as a lifeline for clinical surgeries, accident victims, cancer patients, and pediatric operations across Sri Lanka. One bag of blood is processed into packed red blood cells, plasma, and platelets, which can help up to 3 individual patients.
+                        </p>
+                        <div class="mt-4 pt-2 border-top">
+                            <small class="text-uppercase text-secondary fw-bold" style="font-size: 10px;">Last Donation Date</small>
+                            <p class="mb-0 text-danger fw-bold fs-5" id="impact-last-date">Never</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Action Links -->
+                <div class="col-md-6">
+                    <div class="premium-card h-100">
+                        <h3 class="mb-3 font-heading text-dark border-bottom pb-2">Donation Options</h3>
+                        <div class="d-flex flex-column gap-3">
+                            <a href="donor-history.html" class="p-3 border rounded-4 d-flex align-items-center gap-3 text-decoration-none text-dark hover-effect-light">
+                                <div class="fs-2 text-danger"><i class="bi bi-clock-history"></i></div>
+                                <div>
+                                    <h5 class="mb-1 font-heading" style="font-size: 15px;">View Full History</h5>
+                                    <small class="text-secondary" style="font-size: 12px;">Check details of all your logged donations.</small>
+                                </div>
+                            </a>
+                            <a href="donation-camps.html" class="p-3 border rounded-4 d-flex align-items-center gap-3 text-decoration-none text-dark hover-effect-light">
+                                <div class="fs-2 text-danger"><i class="bi bi-calendar-event"></i></div>
+                                <div>
+                                    <h5 class="mb-1 font-heading" style="font-size: 15px;">Register for a Camp</h5>
+                                    <small class="text-secondary" style="font-size: 12px;">Browse upcoming drives and reserve a slot.</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    // Render profile details from local storage session
+    const user = auth.user;
+    
+    document.getElementById('dash-fullname').textContent = user.fullName;
+    document.getElementById('dash-email').textContent = user.email;
+    document.getElementById('dash-bloodtype').textContent = `Blood Group: ${user.bloodType}`;
+    document.getElementById('dash-donor-number').textContent = user.donor_number || 'Pending';
+    document.getElementById('dash-phone').textContent = user.phone;
+    document.getElementById('dash-location').textContent = `${user.town}, ${user.district} District (${user.province} Province)`;
+
+    // Fetch live donation summary stats via API
+    try {
+        const result = await apiFetch('api/donations.html');
+        if (result.status === 'success') {
+            const summary = result.summary;
+            document.getElementById('impact-count').textContent = summary.total_donations;
+            document.getElementById('impact-volume').textContent = summary.total_volume_ml + " ml";
+            document.getElementById('impact-lives').textContent = summary.lives_saved_estimate;
+            document.getElementById('impact-last-date').textContent = summary.last_donation_date ? summary.last_donation_date : 'Never';
+
+            // Calculate eligibility (120-day interval)
+            let isEligible = true;
+            let daysDiff = 0;
+            let daysRemaining = 0;
+            
+            if (summary.last_donation_date) {
+                const dateParts = summary.last_donation_date.split('-');
+                const year = parseInt(dateParts[0], 10);
+                const month = parseInt(dateParts[1], 10) - 1;
+                const day = parseInt(dateParts[2], 10);
+                const lastDate = new Date(year, month, day);
+                
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                const diffTime = today.getTime() - lastDate.getTime();
+                daysDiff = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff < 120) {
+                    isEligible = false;
+                    daysRemaining = 120 - daysDiff;
+                }
+            }
+
+            const card = document.getElementById('eligibility-card');
+            const container = document.getElementById('eligibility-container');
+            const subtitle = document.getElementById('eligibility-subtitle');
+            const title = document.getElementById('eligibility-title');
+            const desc = document.getElementById('eligibility-desc');
+            const badge = document.getElementById('eligibility-badge');
+            const btn = document.getElementById('eligibility-btn');
+
+            if (isEligible) {
+                container.style.borderColor = '#198754';
+                subtitle.style.color = '#198754';
+                subtitle.textContent = "Donation Status";
+                title.textContent = "You are Eligible!";
+                badge.style.backgroundColor = '#e6f4ea';
+                badge.style.color = '#137333';
+                badge.innerHTML = '<i class="bi bi-check-lg"></i>';
+                
+                if (summary.last_donation_date) {
+                    desc.textContent = `It has been over 120 days since your last donation (${daysDiff} days). You are fully recovered and safe to donate blood again.`;
+                } else {
+                    desc.textContent = "You have not logged any blood donations yet. You are fully eligible and safe to make your first blood donation today!";
+                }
+                
+                btn.textContent = "Find a Camp Near You";
+                btn.href = "donation-camps.html";
+            } else {
+                container.style.borderColor = '#d97706';
+                subtitle.style.color = '#d97706';
+                subtitle.textContent = "Donation Status";
+                title.textContent = "Not Eligible Yet";
+                badge.style.backgroundColor = '#fff7e6';
+                badge.style.color = '#b25e00';
+                badge.innerHTML = '<i class="bi bi-clock-fill"></i>';
+                
+                const lastDateObj = new Date(summary.last_donation_date);
+                const formattedLastDate = lastDateObj.toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+                
+                desc.textContent = `You last donated on ${formattedLastDate} (${daysDiff} days ago). Please wait another ${daysRemaining} days before you can donate blood again for your safety.`;
+                btn.textContent = "View Donation History";
+                btn.href = "donor-history.html";
+            }
+            
+            card.style.display = 'block';
+        }
+    } catch (e) {
+        console.error('Failed to load donor impact statistics', e);
+    }
+});
+</script>
+
+<style>
+.hover-effect-light {
+    transition: all 0.2s ease;
+}
+.hover-effect-light:hover {
+    background-color: var(--color-surface);
+    border-color: var(--color-crimson) !important;
+}
+</style>
+
+

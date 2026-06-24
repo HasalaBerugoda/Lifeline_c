@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initialize Mock Database | LifeLine Blood Bank</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #111827; color: #f9fafb; font-family: sans-serif; }
+        .card { background-color: #1f2937; border: 1px solid #374151; color: #f9fafb; border-radius: 20px; }
+    </style>
+    <script src="js/auth.js"></script>
+</head>
+<body>
+    <div class="container my-5" style="max-width: 800px;">
+        <h1 class="mb-4 text-danger font-heading"><i class="bi bi-droplet-fill"></i> LifeLine System Setup</h1>
+        <div class="card p-4 shadow-lg">
+            <h3 class="mb-3 text-white border-bottom pb-2">Client-Side Database Reset</h3>
+            <p class="text-white-50">Since this is a static version hosted on GitHub Pages, the database operates entirely within your browser's local storage (<code>localStorage</code>).</p>
+            
+            <button onclick="resetDatabase()" class="btn btn-danger btn-lg w-100 py-3 mb-4 fw-bold">
+                <i class="bi bi-arrow-clockwise me-1"></i> Initialize / Reset Mock Database
+            </button>
+
+            <div id="setup-output" style="display: none;">
+                <div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Mock database initialized/verified in local storage.</div>
+                <div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Seeded 6 default users (Admin, Updater, and Donors).</div>
+                <div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Seeded 2500 synthetic blood bags inventory records.</div>
+                <div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Seeded 3 upcoming and past blood camps.</div>
+                <div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Seeded 3 critical urgent requests.</div>
+                
+                <h4 class="text-success mt-4">Database Seeding Completed Successfully!</h4>
+                <p class="lead">Use the following test credentials to log in:</p>
+                <table class="table table-dark table-striped table-bordered mt-2">
+                    <thead>
+                        <tr><th>Role</th><th>Email</th><th>Password</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Admin</td><td><code>admin@lifeline.com</code></td><td><code>AdminPassword123</code></td></tr>
+                        <tr><td>Updater</td><td><code>updater@lifeline.com</code></td><td><code>UpdaterPassword123</code></td></tr>
+                        <tr><td>Donor (O+)</td><td><code>donor@lifeline.com</code></td><td><code>DonorPassword123</code></td></tr>
+                        <tr><td>Donor (B-)</td><td><code>jane@lifeline.com</code></td><td><code>DonorPassword123</code></td></tr>
+                        <tr><td>Revoked</td><td><code>revoked@lifeline.com</code></td><td><code>RevokedPassword123</code></td></tr>
+                    </tbody>
+                </table>
+                <a href="index.html" class="btn btn-crimson btn-pill w-100 py-3 fw-bold mt-2">Proceed to Portal Login</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    function resetDatabase() {
+        initMockDB(true); // Force reset local storage db
+        document.getElementById('setup-output').style.display = 'block';
+    }
+    </script>
+</body>
+</html>

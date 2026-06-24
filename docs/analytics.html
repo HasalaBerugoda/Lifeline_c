@@ -1,0 +1,506 @@
+
+
+
+<div class="hero-header">
+    
+    <h1 class="hero-title">Blood Stock Analytics</h1>
+    <p class="hero-subtitle">Visualized supply forecasts, historic usage distributions, and critical alert updates powered by the CSV analytics engine.</p>
+</div>
+
+<div class="container overlap-container">
+    <!-- Summary Stat Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-sm-6">
+            <div class="premium-card text-center py-4">
+                <div class="stat-number text-danger" id="summary-total">0</div>
+                <div class="stat-label">Total Bags Processed</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="premium-card text-center py-4">
+                <div class="stat-number text-success" id="summary-available">0</div>
+                <div class="stat-label">Bags Available</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="premium-card text-center py-4">
+                <div class="stat-number text-info" id="summary-used">0</div>
+                <div class="stat-label">Bags Used</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="premium-card text-center py-4">
+                <div class="stat-number text-warning" id="summary-expired">0</div>
+                <div class="stat-label">Bags Expired</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Critical Alerts Panel -->
+    <div class="row mb-4" id="alerts-row" style="display: none;">
+        <div class="col-12">
+            <div class="premium-card border-start border-danger border-4">
+                <h3 class="font-heading text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Critical Stock Deficits</h3>
+                <div class="row g-3" id="alerts-list-container">
+                    <!-- Dynamic Alerts -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 1: Stock Grid & Distribution Donut -->
+    <div class="row g-4 mb-5">
+        <!-- Current Available Stock -->
+        <div class="col-lg-5 col-md-12">
+            <div class="premium-card h-100">
+                <h4 class="font-heading text-dark mb-1">Current Available Stock</h4>
+                <p class="text-secondary mb-4" style="font-size: 13px;">Bags with status "Available" in the dataset</p>
+                <div class="row g-2" id="stock-grid-container">
+                    <!-- 8 Mini Stock Cards dynamically populated -->
+                </div>
+            </div>
+        </div>
+        <!-- Donation Distribution -->
+        <div class="col-lg-7 col-md-12">
+            <div class="premium-card h-100">
+                <h4 class="font-heading text-dark mb-1">Donation Distribution</h4>
+                <p class="text-secondary mb-4" style="font-size: 13px;">All bags by blood type (2021-2026)</p>
+                <div style="position: relative; height: 260px;">
+                    <canvas id="donutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Monthly Usage Trend (Line Chart) -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="premium-card">
+                <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+                    <div>
+                        <h4 class="font-heading text-dark mb-1">Monthly Usage Trend</h4>
+                        <p class="text-secondary mb-0" style="font-size: 13px;">Blood used per month &mdash; last 24 months</p>
+                    </div>
+                    <div style="width: 150px;">
+                        <select class="form-select form-select-sm" id="trend-blood-filter">
+                            <option value="ALL">All Types</option>
+                            <option value="O+">O+</option>
+                            <option value="A+">A+</option>
+                            <option value="B+">B+</option>
+                            <option value="AB+">AB+</option>
+                            <option value="O-">O-</option>
+                            <option value="A-">A-</option>
+                            <option value="B-">B-</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4" style="position: relative; height: 350px;">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: Demand Forecast (Bar Chart) & Prediction Details (Table) -->
+    <div class="row g-4 mb-5">
+        <!-- Demand Forecast -->
+        <div class="col-lg-6 col-md-12">
+            <div class="premium-card h-100">
+                <h4 class="font-heading text-dark mb-1">Demand Forecast</h4>
+                <p class="text-secondary mb-4" style="font-size: 13px;">Weighted linear regression &mdash; next 3 months</p>
+                <div style="position: relative; height: 320px;">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Prediction Details -->
+        <div class="col-lg-6 col-md-12">
+            <div class="premium-card h-100">
+                <h4 class="font-heading text-dark mb-1">Prediction Details</h4>
+                <p class="text-secondary mb-4" style="font-size: 13px;">Detailed forecasts and current available stocks</p>
+                <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <table class="table table-sm align-middle" style="font-size: 13px;">
+                        <thead class="sticky-top bg-white" style="z-index: 1;">
+                            <tr style="border-bottom: 2px solid #e5e7eb;">
+                                <th style="font-weight: 600; color: #4b5563; padding: 10px 5px;">TYPE</th>
+                                <th style="font-weight: 600; color: #4b5563; padding: 10px 5px;">AVAILABLE</th>
+                                <th style="font-weight: 600; color: #4b5563; padding: 10px 5px;" id="th-month-1">JULY 2026</th>
+                                <th style="font-weight: 600; color: #4b5563; padding: 10px 5px;" id="th-month-2">AUGUST 2026</th>
+                                <th style="font-weight: 600; color: #4b5563; padding: 10px 5px;" id="th-month-3">SEPTEMBER 2026</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-table-body">
+                            <!-- Dynamic Table Rows populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 4: Demand Trends -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="premium-card">
+                <h4 class="font-heading text-dark mb-1">Demand Trends</h4>
+                <p class="text-secondary mb-4" style="font-size: 13px;">Last 6 months average vs previous 6 months</p>
+                <div class="row g-3" id="trends-cards-container">
+                    <!-- 8 Colored Blocks populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    let rawData = null;
+    
+    // Chart instances to support updates
+    let donutChartInstance = null;
+    let forecastChartInstance = null;
+    let trendChartInstance = null;
+
+    // Premium color palette for each blood type
+    const typeColors = {
+        'O+': '#e63946',   // Vibrant Crimson Red
+        'A+': '#1d3557',   // Dark Navy Blue
+        'B+': '#059669',   // Emerald Green
+        'AB+': '#ea580c',  // Orange
+        'O-': '#f87171',   // Coral/Light Red
+        'A-': '#3b82f6',   // Steel Blue
+        'B-': '#7c3aed',   // Purple
+        'AB-': '#16a34a'   // Medium Green
+    };
+
+    // Helper to get dynamic month names for forecast relative to the dataset's current month
+    const getMonthYearStr = (offset) => {
+        if (!rawData) return "";
+        const sampleType = Object.keys(rawData.monthly_usage)[0];
+        const months = Object.keys(rawData.monthly_usage[sampleType]);
+        const lastMonthStr = months[months.length - 1]; // "YYYY-MM"
+        const parts = lastMonthStr.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // 0-indexed
+        
+        const d = new Date(year, month + offset, 1);
+        const monthName = d.toLocaleString('en-US', { month: 'long' }).toUpperCase();
+        return `${monthName} ${d.getFullYear()}`;
+    };
+
+    const getTrendBadge = (pct) => {
+        if (Math.abs(pct) <= 5.0) {
+            return { text: '→ Stable', bg: '#f1f3f4', color: '#5f6368' };
+        } else if (pct > 5.0) {
+            return { text: `↑ ${Math.round(pct)}%`, bg: '#fce8e6', color: '#c5221f' };
+        } else {
+            return { text: `↓ ${Math.round(Math.abs(pct))}%`, bg: '#e6f4ea', color: '#137333' };
+        }
+    };
+
+    const getTrendCardDetails = (pct) => {
+        if (Math.abs(pct) <= 5.0) {
+            return {
+                text: `→ ${Math.round(Math.abs(pct))}%`,
+                bg: '#f1f3f4',
+                border: 'rgba(95, 99, 104, 0.15)',
+                color: '#5f6368'
+            };
+        } else if (pct > 5.0) {
+            return {
+                text: `↑ ${Math.round(pct)}%`,
+                bg: '#fce8e6',
+                border: 'rgba(197, 34, 31, 0.15)',
+                color: '#c5221f'
+            };
+        } else {
+            return {
+                text: `↓ ${Math.round(Math.abs(pct))}%`,
+                bg: '#e6f4ea',
+                border: 'rgba(19, 115, 51, 0.15)',
+                color: '#137333'
+            };
+        }
+    };
+
+    // Load API Analytics
+    try {
+        const result = await apiFetch('api/analytics.html');
+        if (result.status === 'success') {
+            rawData = result.data;
+            renderDashboard();
+        } else {
+            throw new Error(result.message || 'Analytics load failed');
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Failed to load analytics dashboard data.");
+    }
+
+    // Main Dashboard Rendering Orchestrator
+    function renderDashboard() {
+        if (!rawData) return;
+
+        // 1. Summary Cards
+        document.getElementById('summary-total').textContent = rawData.total_bags;
+        document.getElementById('summary-available').textContent = rawData.available_count;
+        document.getElementById('summary-used').textContent = rawData.used_count;
+        document.getElementById('summary-expired').textContent = rawData.expired_count;
+
+        // 2. Stock Grid & Alerts
+        const alertsContainer = document.getElementById('alerts-list-container');
+        const alertsRow = document.getElementById('alerts-row');
+        const grid = document.getElementById('stock-grid-container');
+        const matrixBody = document.getElementById('matrix-table-body');
+        const trendsContainer = document.getElementById('trends-cards-container');
+        
+        alertsContainer.innerHTML = '';
+        grid.innerHTML = '';
+        matrixBody.innerHTML = '';
+        trendsContainer.innerHTML = '';
+
+        const bloodTypes = Object.keys(rawData.available_stock);
+
+        // Update table headers dynamically
+        document.getElementById('th-month-1').textContent = getMonthYearStr(1);
+        document.getElementById('th-month-2').textContent = getMonthYearStr(2);
+        document.getElementById('th-month-3').textContent = getMonthYearStr(3);
+
+        // Build stock grid & Prediction Details Table & Demand Trends
+        bloodTypes.forEach(bt => {
+            const currentStock = rawData.available_stock[bt];
+            const trend = rawData.trends[bt];
+            const fc = rawData.forecast[bt];
+            const color = typeColors[bt] || '#000000';
+            
+            // Stock grid badge and card
+            const stockBadge = getTrendBadge(trend.pct_change);
+            const stockCard = document.createElement('div');
+            stockCard.className = 'col-md-3 col-6 mb-2';
+            stockCard.innerHTML = `
+                <div class="text-center p-3 border rounded-4 bg-white hover-effect-light" style="border-color: #e5e7eb !important; height: 100%;">
+                    <div class="fw-bold mb-1" style="color: ${color}; font-size: 16px;">${bt}</div>
+                    <div class="fs-3 fw-bold text-dark mb-2">${currentStock} <span class="text-secondary" style="font-size: 12px; font-weight: normal;">bags</span></div>
+                    <span class="badge px-2 py-1 rounded-pill" style="font-size: 11px; font-weight: 600; background-color: ${stockBadge.bg}; color: ${stockBadge.color};">
+                        ${stockBadge.text}
+                    </span>
+                </div>
+            `;
+            grid.appendChild(stockCard);
+
+            // Prediction Details Table row
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="fw-bold fs-6" style="color: ${color}; padding: 10px 5px;">${bt}</td>
+                <td class="fw-semibold text-dark" style="padding: 10px 5px;">${currentStock}</td>
+                <td style="padding: 10px 5px;">${Math.round(fc.month1)}</td>
+                <td style="padding: 10px 5px;">${Math.round(fc.month2)}</td>
+                <td style="padding: 10px 5px;">${Math.round(fc.month3)}</td>
+            `;
+            matrixBody.appendChild(row);
+
+            // Demand Trends blocks
+            const trendCardDetails = getTrendCardDetails(trend.pct_change);
+            const trendCard = document.createElement('div');
+            trendCard.className = 'col-lg-3 col-md-4 col-sm-6';
+            trendCard.innerHTML = `
+                <div class="p-3 rounded-4" style="background-color: ${trendCardDetails.bg}; border: 1px solid ${trendCardDetails.border}; height: 100%;">
+                    <div class="fw-bold mb-1" style="color: ${color}; font-size: 15px;">${bt}</div>
+                    <div class="fw-bold mb-2" style="color: ${trendCardDetails.color}; font-size: 26px; font-family: var(--font-heading); line-height: 1.1;">
+                        ${trendCardDetails.text}
+                    </div>
+                    <div class="text-secondary" style="font-size: 11px;">
+                        Recent avg: <strong>${trend.avg_last_6}/mo</strong> vs <strong>${trend.avg_prev_6}/mo</strong> prior
+                    </div>
+                </div>
+            `;
+            trendsContainer.appendChild(trendCard);
+        });
+
+        // Build Alerts
+        const alertsList = rawData.alerts;
+        if (alertsList && alertsList.length > 0) {
+            alertsRow.style.display = 'block';
+            alertsList.forEach(alert => {
+                const box = document.createElement('div');
+                box.className = 'col-md-6 col-lg-4';
+                box.innerHTML = `
+                    <div class="alert alert-danger mb-0 border-0 p-3 rounded-4" style="background-color:rgba(220,38,38,0.06);">
+                        <h5 class="font-heading mb-1 text-danger">${alert.blood_type} Stock Crisis</h5>
+                        <p class="mb-0 text-secondary" style="font-size:12px;">
+                            Reserve: <strong>${alert.available} bags</strong> vs Predicted Demand: <strong>${alert.predicted_demand} bags</strong> (Deficit: ${alert.deficit} bags).
+                        </p>
+                    </div>
+                `;
+                alertsContainer.appendChild(box);
+            });
+        } else {
+            alertsRow.style.display = 'none';
+        }
+
+        // 3. Render Charts
+        initDonutChart();
+        initForecastChart();
+        initTrendChart();
+    }
+
+    // Donut Chart: Overall Group Distribution
+    function initDonutChart() {
+        const ctx = document.getElementById('donutChart').getContext('2d');
+        const dataVals = Object.values(rawData.available_stock);
+        const dataLabels = Object.keys(rawData.available_stock);
+        const dataColors = dataLabels.map(bt => typeColors[bt] || '#6b7280');
+
+        if (donutChartInstance) donutChartInstance.destroy();
+
+        donutChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: dataLabels,
+                datasets: [{
+                    data: dataVals,
+                    backgroundColor: dataColors,
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: { family: 'Poppins', size: 11 },
+                            boxWidth: 12
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Forecast Chart: 3-Month demand forecast per blood type grouped by month
+    function initForecastChart() {
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        const bloodTypes = Object.keys(rawData.forecast);
+        
+        const headerM1 = getMonthYearStr(1);
+        const headerM2 = getMonthYearStr(2);
+        const headerM3 = getMonthYearStr(3);
+        const monthLabels = [headerM1, headerM2, headerM3];
+
+        const datasets = bloodTypes.map(bt => {
+            return {
+                label: bt,
+                data: [
+                    rawData.forecast[bt].month1,
+                    rawData.forecast[bt].month2,
+                    rawData.forecast[bt].month3
+                ],
+                backgroundColor: typeColors[bt] || '#6b7280',
+                borderRadius: 4
+            };
+        });
+
+        if (forecastChartInstance) forecastChartInstance.destroy();
+
+        forecastChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: monthLabels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: 'Poppins', size: 10 } }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Bags Required', font: { family: 'Poppins' } }
+                    }
+                }
+            }
+        });
+    }
+
+    // 24-Month Trend Line Chart with Dropdown filter
+    const filterSelect = document.getElementById('trend-blood-filter');
+    filterSelect.addEventListener('change', function() {
+        initTrendChart(this.value);
+    });
+
+    function initTrendChart(bloodTypeFilter = 'ALL') {
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        
+        const sampleType = Object.keys(rawData.monthly_usage)[0];
+        const months = Object.keys(rawData.monthly_usage[sampleType]);
+
+        let datasets = [];
+
+        if (bloodTypeFilter === 'ALL') {
+            for (let bt in rawData.monthly_usage) {
+                datasets.push({
+                    label: bt,
+                    data: Object.values(rawData.monthly_usage[bt]),
+                    borderColor: typeColors[bt] || '#6b7280',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2.5,
+                    tension: 0.35,
+                    pointRadius: 2
+                });
+            }
+        } else {
+            datasets.push({
+                label: bloodTypeFilter,
+                data: Object.values(rawData.monthly_usage[bloodTypeFilter]),
+                borderColor: typeColors[bloodTypeFilter],
+                backgroundColor: typeColors[bloodTypeFilter] + '0f',
+                fill: true,
+                borderWidth: 3,
+                tension: 0.35,
+                pointRadius: 4,
+                pointBackgroundColor: typeColors[bloodTypeFilter]
+            });
+        }
+
+        if (trendChartInstance) trendChartInstance.destroy();
+
+        trendChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: 'Poppins', size: 11 } }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Bags Used', font: { family: 'Poppins' } }
+                    },
+                    x: {
+                        grid: { display: true, color: 'rgba(0, 0, 0, 0.05)' }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+
+

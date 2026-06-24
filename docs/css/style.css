@@ -369,47 +369,12 @@ footer h5 {
 
 /* Alert Banner Styling */
 .stock-alert-banner {
-    background: #c1121f;
+    background: linear-gradient(90deg, #dc2626, #c1121f);
     color: white;
-    border-radius: 16px;
-    padding: 20px 24px;
-    box-shadow: 0 8px 30px rgba(193, 18, 31, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    animation: alert-attention 2.5s infinite ease-in-out;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    padding: 15px 20px;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2);
 }
-
-.stock-alert-banner:hover {
-    transform: translateY(-2px) scale(1.005);
-    box-shadow: 0 12px 35px rgba(193, 18, 31, 0.6);
-}
-
-.stock-alert-banner .btn-pill {
-    background-color: white !important;
-    color: #c1121f !important;
-    border: none !important;
-    font-weight: 700;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.stock-alert-banner .btn-pill:hover {
-    background-color: #f8f9fa !important;
-    color: #b91c1c !important;
-    transform: scale(1.06);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-@keyframes alert-attention {
-    0%, 100% {
-        transform: translateY(0);
-        box-shadow: 0 8px 30px rgba(193, 18, 31, 0.45);
-    }
-    50% {
-        transform: translateY(-3px);
-        box-shadow: 0 16px 35px rgba(193, 18, 31, 0.75);
-    }
-}
-
 
 /* Responsive Table Styles */
 .table-responsive {

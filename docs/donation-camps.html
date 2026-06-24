@@ -1,0 +1,684 @@
+
+
+<style>
+.camps-filter-bar {
+    background-color: #ffffff;
+    border-radius: 100px;
+    padding: 8px 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.camps-filter-label {
+    font-weight: 600;
+    color: var(--color-ink);
+    font-size: 14px;
+}
+
+.btn-pill-filter {
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: 1px solid var(--color-light-gray);
+    background-color: #ffffff;
+    color: var(--color-gray);
+}
+
+.btn-pill-filter:hover {
+    border-color: var(--color-crimson);
+    color: var(--color-crimson);
+}
+
+.btn-pill-filter.active {
+    background-color: var(--color-crimson) !important;
+    color: #ffffff !important;
+    border-color: var(--color-crimson) !important;
+    font-weight: 600;
+}
+
+.camp-card {
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 6px 24px rgba(17, 24, 39, 0.03);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.camp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(17, 24, 39, 0.07);
+}
+
+.camp-badge-date {
+    background-color: #fde8e8;
+    color: var(--color-crimson-dark);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.camp-badge-status {
+    background-color: #fde8e8;
+    color: var(--color-crimson-dark);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.camp-title {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.camp-desc {
+    color: var(--color-gray);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    flex-grow: 1;
+}
+
+.camp-location {
+    font-weight: 500;
+    color: var(--color-ink);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.camp-location-link {
+    color: var(--color-crimson);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 4px;
+    margin-left: 20px;
+    transition: color 0.2s ease;
+}
+
+.camp-location-link:hover {
+    color: var(--color-crimson-dark);
+    text-decoration: underline;
+}
+
+.camp-meta-row {
+    display: flex;
+    gap: 16px;
+    color: var(--color-gray);
+    font-size: 13px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+}
+
+.camp-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.camp-divider {
+    border-top: 1px solid var(--color-light-gray);
+    margin: 16px 0;
+    opacity: 0.5;
+}
+
+.camp-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.camp-organizer-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--color-gray);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.camp-organizer-name {
+    font-weight: 700;
+    color: var(--color-ink);
+    font-size: 14px;
+}
+
+.btn-action-register {
+    background-color: #ffffff;
+    color: var(--color-ink);
+    border: 1px solid var(--color-light-gray);
+    border-radius: 12px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-action-register:hover {
+    background-color: var(--color-surface);
+    border-color: var(--color-gray);
+}
+
+.btn-action-registered {
+    background-color: #ffffff;
+    color: var(--color-ink);
+    border: 1px solid var(--color-light-gray);
+    border-radius: 12px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.6;
+}
+.btn-close-map-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1055;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(17, 24, 39, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-close-map-modal:hover {
+    background: var(--color-crimson);
+    color: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(230, 57, 70, 0.4);
+}
+
+.modal-details-panel {
+    background-color: #111827 !important;
+    background-image: radial-gradient(circle at 10% 20%, rgba(230, 57, 70, 0.15) 0%, transparent 60%), linear-gradient(135deg, #111827 0%, #1a2232 100%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-details-panel::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-details-panel::-webkit-scrollbar-track {
+    background: #111827;
+}
+.modal-details-panel::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 3px;
+}
+.modal-details-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--color-crimson);
+}
+
+.modal-details-panel .badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 991.98px) {
+    #map-iframe {
+        height: 350px !important;
+    }
+    .modal-details-panel {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-right: none;
+    }
+}
+@media (min-width: 992px) {
+    .modal-details-panel {
+        height: 520px;
+        overflow-y: auto;
+    }
+    #map-iframe {
+        height: 520px !important;
+    }
+}
+</style>
+
+<div class="hero-header">
+    
+    <h1 class="hero-title">Blood Donation Camps</h1>
+    <p class="hero-subtitle">Browse scheduled public drives, find locations, and secure your appointment slot.</p>
+</div>
+
+<div class="container overlap-container">
+    <!-- Filter Bar -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="camps-filter-bar" id="camps-filter-group">
+                <span class="camps-filter-label">Filter:</span>
+                <button type="button" class="btn btn-pill-filter active" data-filter="all">All Camps</button>
+                <button type="button" class="btn btn-pill-filter" data-filter="month">This Month</button>
+                <button type="button" class="btn btn-pill-filter d-none" data-filter="mine" id="filter-mine-btn">My Registrations</button>
+            </div>
+            <div class="text-secondary fw-semibold" id="camps-count-label">Loading camps...</div>
+        </div>
+    </div>
+
+    <!-- Camps Grid -->
+    <div class="row g-4" id="camps-grid-container">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-danger" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-secondary mt-3">Fetching current donation drives...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Google Maps Embed Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content position-relative" style="border-radius: 24px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);">
+            <!-- Absolute Floating Close Button -->
+            <button type="button" class="btn-close-map-modal" data-bs-dismiss="modal" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Details Panel (Left Column) -->
+                    <div class="col-lg-5 d-flex flex-column justify-content-between p-4 bg-dark text-white modal-details-panel">
+                        <div>
+                            <!-- Status Badges -->
+                            <div class="d-flex justify-content-between align-items-center mb-3 pt-2">
+                                <span class="badge rounded-pill px-3 py-2 bg-danger" id="modal-camp-badge-date">📅 Date</span>
+                                <span class="badge rounded-pill px-3 py-2" id="modal-camp-badge-status">UPCOMING</span>
+                            </div>
+                            
+                            <h3 class="font-heading mb-2 text-white" id="modal-camp-title" style="font-size: 24px;">Camp Title</h3>
+                            <p class="text-white-50 mb-4" id="modal-camp-desc" style="font-size: 13px; line-height: 1.6;">Camp description...</p>
+                            
+                            <!-- Quick Info List -->
+                            <div class="d-flex flex-column gap-3 mb-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="fs-4 text-danger"><i class="bi bi-geo-alt-fill"></i></div>
+                                    <div>
+                                        <small class="text-uppercase text-white-50 fw-bold" style="font-size: 10px;">Location</small>
+                                        <p class="mb-0 fw-semibold text-white" id="modal-camp-location" style="font-size: 13px;">Colombo, Sri Lanka</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="fs-4 text-danger"><i class="bi bi-clock-fill"></i></div>
+                                    <div>
+                                        <small class="text-uppercase text-white-50 fw-bold" style="font-size: 10px;">Time</small>
+                                        <p class="mb-0 fw-semibold text-white" id="modal-camp-time" style="font-size: 13px;">09:00 AM</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="fs-4 text-danger"><i class="bi bi-people-fill"></i></div>
+                                    <div>
+                                        <small class="text-uppercase text-white-50 fw-bold" style="font-size: 10px;">Registrations</small>
+                                        <p class="mb-0 fw-semibold text-white" id="modal-camp-registrations" style="font-size: 13px;">12 Registered</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="fs-4 text-danger"><i class="bi bi-person-badge-fill"></i></div>
+                                    <div>
+                                        <small class="text-uppercase text-white-50 fw-bold" style="font-size: 10px;">Organizer</small>
+                                        <p class="mb-0 fw-semibold text-white" id="modal-camp-organizer" style="font-size: 13px;">Rotaract Club</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions Block -->
+                        <div class="d-flex flex-column gap-2 mt-auto pt-3 border-top border-secondary">
+                            <div id="modal-action-container">
+                                <!-- Dynamic Register Button -->
+                            </div>
+                            <a href="#" id="modal-directions-btn" target="_blank" class="btn btn-pill btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-geo-fill"></i> Open in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Map Panel (Right Column) -->
+                    <div class="col-lg-7 position-relative">
+                        <iframe id="map-iframe" width="100%" height="520" style="border:0; display: block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    const token = localStorage.getItem('ll_token');
+    let userRegistrations = [];
+    let allCamps = [];
+    let currentFilter = 'all';
+
+    // Helper to safely parse integer
+    function toInt(val) {
+        return parseInt(val, 10) || 0;
+    }
+
+    // Show "My Registrations" filter button only if logged in
+    if (token) {
+        document.getElementById('filter-mine-btn').classList.remove('d-none');
+        try {
+            const result = await apiFetch('api/camps.html?action=my_registrations');
+            if (result.status === 'success') {
+                userRegistrations = result.data.map(reg => toInt(reg.id) || toInt(reg.camp_id));
+            }
+        } catch (e) {
+            console.error('Failed to load user registrations list', e);
+        }
+    }
+
+    // Load Camps list
+    try {
+        const response = await fetch('api/camps.html');
+        const result = await response.json();
+        if (result.status === 'success') {
+            allCamps = result.data;
+            renderCamps();
+        } else {
+            throw new Error(result.message || 'Failed to fetch camps');
+        }
+    } catch (e) {
+        console.error('Camps fetch error', e);
+        document.getElementById('camps-grid-container').innerHTML = `
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-danger d-inline-block">Failed to load donation camps. Please check connection.</div>
+            </div>
+        `;
+    }
+
+    // Filter Buttons Interaction
+    const filterButtons = document.querySelectorAll('#camps-filter-group button');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active classes
+            filterButtons.forEach(b => {
+                b.classList.remove('active');
+            });
+
+            // Set active class
+            this.classList.add('active');
+
+            currentFilter = this.getAttribute('data-filter');
+            renderCamps();
+        });
+    });
+
+    // Helper to render filtered grid
+    function renderCamps() {
+        const grid = document.getElementById('camps-grid-container');
+        grid.innerHTML = '';
+
+        const currentMonth = new Date().getMonth(); // 0-11
+        const currentYear = new Date().getFullYear();
+
+        const filtered = allCamps.filter(camp => {
+            const campDate = new Date(camp.date);
+            
+            if (currentFilter === 'month') {
+                return campDate.getMonth() === currentMonth && campDate.getFullYear() === currentYear;
+            } else if (currentFilter === 'mine') {
+                return userRegistrations.includes(toInt(camp.id));
+            }
+            return true; // 'all'
+        });
+
+        document.getElementById('camps-count-label').textContent = `Showing ${filtered.length} scheduled drives`;
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-light border p-5 rounded-4 d-inline-block">
+                        <i class="bi bi-calendar-x text-secondary fs-1 d-block mb-3"></i>
+                        <h5>No donation camps found</h5>
+                        <p class="text-secondary mb-0">Try checking a different filter option.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        filtered.forEach(camp => {
+            const isRegistered = userRegistrations.includes(toInt(camp.id));
+            const registeredCount = toInt(camp.registered_count) || 0;
+            
+            const dateParts = camp.date.split('-');
+            const year = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10) - 1;
+            const day = parseInt(dateParts[2], 10);
+            const dateObj = new Date(year, month, day);
+            const formattedDateBadge = dateObj.toLocaleDateString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+            });
+            
+            const timeParts = camp.time.split(':');
+            const timeShort = timeParts[0] + ':' + timeParts[1];
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const diffTime = dateObj.getTime() - today.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+            let statusText = 'UPCOMING';
+            if (diffDays === 0) {
+                statusText = 'TODAY';
+            } else if (diffDays > 0 && diffDays <= 7) {
+                statusText = 'SOON';
+            }
+
+            const cardCol = document.createElement('div');
+            cardCol.className = 'col-lg-4 col-md-6';
+            cardCol.innerHTML = `
+                <div class="camp-card">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="camp-badge-date">📅 ${formattedDateBadge}</span>
+                        <span class="camp-badge-status">${statusText}</span>
+                    </div>
+
+                    <h4 class="camp-title">${camp.name}</h4>
+                    <p class="camp-desc">${camp.description || 'No description provided.'}</p>
+                    
+                    <div class="text-start">
+                        <div class="camp-location">
+                            📍 ${camp.location}
+                        </div>
+                        <a href="#" onclick="openMapModal(${camp.id}); return false;" class="camp-location-link">View on Map →</a>
+                    </div>
+                    
+                    <div class="camp-meta-row">
+                        <div class="camp-meta-item">
+                            🕒 ${timeShort}
+                        </div>
+                        <div class="camp-meta-item" id="camp-reg-count-${camp.id}">
+                            👥 ${registeredCount} registered
+                        </div>
+                    </div>
+                    
+                    <hr class="camp-divider">
+
+                    <div class="camp-footer">
+                        <div>
+                            <div class="camp-organizer-label">Organizer</div>
+                            <div class="camp-organizer-name">${camp.organizer}</div>
+                        </div>
+                        <div>
+                            ${isRegistered 
+                                ? `<button id="grid-reg-btn-${camp.id}" class="btn-action-registered" disabled>✔ Registered</button>`
+                                : `<button id="grid-reg-btn-${camp.id}" onclick="registerForCamp(this, ${camp.id})" class="btn-action-register">📋 Register</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(cardCol);
+        });
+    }
+
+    // Map modal helper
+    window.openMapModal = function(campId) {
+        const camp = allCamps.find(c => toInt(c.id) === toInt(campId));
+        if (!camp) return;
+
+        // Parse date
+        const dateParts = camp.date.split('-');
+        const year = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10) - 1;
+        const day = parseInt(dateParts[2], 10);
+        const dateObj = new Date(year, month, day);
+        const formattedDateBadge = dateObj.toLocaleDateString('en-US', {
+            weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+        });
+        
+        // Parse time
+        const timeParts = camp.time.split(':');
+        const timeShort = timeParts[0] + ':' + timeParts[1];
+
+        // Parse status
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const diffTime = dateObj.getTime() - today.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        let statusText = 'UPCOMING';
+        if (diffDays === 0) {
+            statusText = 'TODAY';
+        } else if (diffDays > 0 && diffDays <= 7) {
+            statusText = 'SOON';
+        }
+
+        // Fill modal fields
+        document.getElementById('modal-camp-badge-date').textContent = `📅 ${formattedDateBadge}`;
+        document.getElementById('modal-camp-badge-status').textContent = statusText;
+        
+        // Set status badge style based on diffDays
+        const statusBadge = document.getElementById('modal-camp-badge-status');
+        statusBadge.className = 'badge rounded-pill px-3 py-2';
+        if (diffDays === 0) {
+            statusBadge.classList.add('bg-success');
+        } else if (diffDays > 0 && diffDays <= 7) {
+            statusBadge.classList.add('bg-warning', 'text-dark');
+        } else {
+            statusBadge.classList.add('bg-info', 'text-dark');
+        }
+
+        document.getElementById('modal-camp-title').textContent = camp.name;
+        document.getElementById('modal-camp-desc').textContent = camp.description || 'No description provided.';
+        document.getElementById('modal-camp-location').textContent = camp.location;
+        document.getElementById('modal-camp-time').textContent = timeShort;
+        
+        const registeredCount = toInt(camp.registered_count) || 0;
+        const isRegistered = userRegistrations.includes(toInt(camp.id));
+        
+        document.getElementById('modal-camp-registrations').textContent = `${registeredCount} Registered`;
+        document.getElementById('modal-camp-organizer').textContent = camp.organizer;
+
+        // Render Action Button
+        const actionContainer = document.getElementById('modal-action-container');
+        if (isRegistered) {
+            actionContainer.innerHTML = `<button id="modal-reg-btn-${camp.id}" class="btn-action-registered w-100 justify-content-center" disabled>✔ Registered</button>`;
+        } else {
+            actionContainer.innerHTML = `<button id="modal-reg-btn-${camp.id}" onclick="registerForCamp(this, ${camp.id})" class="btn-action-register w-100 justify-content-center">📋 Register</button>`;
+        }
+
+        // Open in Google Maps link
+        document.getElementById('modal-directions-btn').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(camp.location)}`;
+
+        const iframe = document.getElementById('map-iframe');
+        iframe.src = `https://maps.google.com/maps?q=${encodeURIComponent(camp.location)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+        
+        const modal = new bootstrap.Modal(document.getElementById('mapModal'));
+        modal.show();
+    };
+
+    // Camp Registration API call
+    window.registerForCamp = async function(btn, campId) {
+        if (!token) {
+            const basePath = getBasePath();
+            window.location.href = basePath + 'index.html';
+            return;
+        }
+
+        btn.setAttribute('disabled', 'true');
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>...`;
+
+        try {
+            const result = await apiFetch(`api/camps.html?action=register&id=${campId}`, {
+                method: 'POST'
+            });
+
+            if (result.status === 'success') {
+                btn.className = "btn-action-registered";
+                btn.innerHTML = `✔ Registered`;
+                btn.disabled = true;
+                
+                // Also update the other button if it exists
+                const otherBtnId = btn.id.startsWith('grid-') ? `modal-reg-btn-${campId}` : `grid-reg-btn-${campId}`;
+                const otherBtn = document.getElementById(otherBtnId);
+                if (otherBtn) {
+                    otherBtn.className = "btn-action-registered";
+                    otherBtn.innerHTML = `✔ Registered`;
+                    otherBtn.disabled = true;
+                }
+                
+                userRegistrations.push(toInt(campId));
+                
+                const regCountEl = document.getElementById(`camp-reg-count-${campId}`);
+                if (regCountEl) {
+                    const match = regCountEl.textContent.match(/\d+/);
+                    const currentVal = match ? parseInt(match[0], 10) : 0;
+                    regCountEl.innerHTML = `👥 ${currentVal + 1} registered`;
+                    
+                    // Also update the registration count inside the modal if it exists
+                    const modalRegCountEl = document.getElementById(`modal-camp-registrations`);
+                    if (modalRegCountEl) {
+                        modalRegCountEl.innerHTML = `${currentVal + 1} Registered`;
+                    }
+                }
+            }
+        } catch (error) {
+            alert(error.message || "Failed to register.");
+            btn.removeAttribute('disabled');
+            btn.innerHTML = `📋 Register`;
+        }
+    };
+});
+</script>
+
+

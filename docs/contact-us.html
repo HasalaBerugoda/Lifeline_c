@@ -1,0 +1,119 @@
+
+
+<div class="hero-header">
+    
+    <h1 class="hero-title">Contact Us</h1>
+    <p class="hero-subtitle">Get in touch with the LifeLine management board or submit support queries.</p>
+</div>
+
+<div class="container overlap-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="premium-card">
+                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-chat-left-dots text-danger me-2"></i>Send a Message</h3>
+                <div id="contact-alert" class="alert" style="display: none;"></div>
+
+                <form id="contact-form">
+                    <div class="mb-3">
+                        <label for="contact-name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="contact-name" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="contact-email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="contact-email" placeholder="name@email.com" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="contact-subject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="contact-subject" placeholder="What is this regarding?" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="contact-message" class="form-label">Message / Inquiry Details</label>
+                        <textarea class="form-control" id="contact-message" rows="5" placeholder="Write your message here..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-pill btn-crimson w-100 py-3" id="contact-submit-btn">
+                        <span class="spinner-border spinner-border-sm me-1" id="contact-spinner" style="display: none;"></span>
+                        Send Inquiry Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Autofill fields if logged-in user is available in session storage
+    const userJson = localStorage.getItem('ll_user');
+    if (userJson) {
+        try {
+            const user = JSON.parse(userJson);
+            document.getElementById('contact-name').value = user.fullName || '';
+            document.getElementById('contact-email').value = user.email || '';
+            
+            // Keep them read-only if they are authenticated for security/integrity
+            document.getElementById('contact-name').setAttribute('readonly', 'true');
+            document.getElementById('contact-name').classList.add('bg-light');
+            document.getElementById('contact-email').setAttribute('readonly', 'true');
+            document.getElementById('contact-email').classList.add('bg-light');
+        } catch (e) {
+            console.error('Failed to parse user details for contact form', e);
+        }
+    }
+
+    const form = document.getElementById('contact-form');
+    const alertBox = document.getElementById('contact-alert');
+    const spinner = document.getElementById('contact-spinner');
+    const btn = document.getElementById('contact-submit-btn');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+        spinner.style.display = 'inline-block';
+        btn.setAttribute('disabled', 'true');
+
+        const name    = document.getElementById('contact-name').value;
+        const email   = document.getElementById('contact-email').value;
+        const subject = document.getElementById('contact-subject').value;
+        const message = document.getElementById('contact-message').value;
+
+        try {
+            // Note: Since this endpoint is public for message logging, we use a regular fetch call
+            // or our wrapper which works for guests as well. We will use the fetch api directly
+            // with relative path to avoid 401 exceptions if no token exists.
+            const basePath = getBasePath();
+            const response = await fetch(basePath + 'api/api.html?endpoint=contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, subject, message })
+            });
+
+            const result = await response.json();
+            
+            if (response.ok && result.status === 'success') {
+                alertBox.className = "alert alert-success";
+                alertBox.textContent = result.message;
+                alertBox.style.display = 'block';
+                
+                // Reset form fields except read-only
+                document.getElementById('contact-subject').value = '';
+                document.getElementById('contact-message').value = '';
+            } else {
+                throw new Error(result.message || 'Inquiry submission failed.');
+            }
+        } catch (error) {
+            alertBox.className = "alert alert-danger";
+            alertBox.textContent = error.message || "Failed to deliver message.";
+            alertBox.style.display = 'block';
+        } finally {
+            spinner.style.display = 'none';
+            btn.removeAttribute('disabled');
+        }
+    });
+});
+</script>
+
+

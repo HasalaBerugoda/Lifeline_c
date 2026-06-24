@@ -2,6 +2,7 @@
 // API Multi-Endpoint Router: Handles Profile, Contacts, Users, and Admin Dashboard
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/jwt.php';
+require_once __DIR__ . '/../includes/mail_helper.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -151,13 +152,12 @@ elseif ($endpoint === 'contact') {
             ";
 
             $emailLogStmt = $db->prepare("INSERT INTO email_log (recipient, subject, status, error_msg) VALUES (?, ?, ?, ?)");
-            $mailSent = @mail($to, $subject, $htmlBody, $headers);
+            $result = sendEmailPHPMailer($to, $subject, $htmlBody);
 
-            if ($mailSent) {
+            if ($result['status']) {
                 $emailLogStmt->execute([$to, $subject, 'sent', null]);
             } else {
-                $errorMsg = "PHP mail() returned false. Check local SMTP server configuration.";
-                $emailLogStmt->execute([$to, $subject, 'failed', $errorMsg]);
+                $emailLogStmt->execute([$to, $subject, 'failed', $result['error']]);
             }
 
             // Update contact message status to 'Replied'
@@ -166,7 +166,7 @@ elseif ($endpoint === 'contact') {
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Reply sent successfully. ' . ($mailSent ? 'Email dispatched.' : 'Logged in outbox (local SMTP mail delivery failed).')
+                'message' => 'Reply sent successfully. ' . ($result['status'] ? 'Email dispatched via SMTP.' : 'Logged in outbox (SMTP mail delivery failed: ' . $result['error'] . ')')
             ]);
             exit;
         }

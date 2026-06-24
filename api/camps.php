@@ -2,6 +2,7 @@
 // API Camps Handler: CRUD, Registrations, and Participants
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/jwt.php';
+require_once __DIR__ . '/../includes/mail_helper.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -221,17 +222,15 @@ if ($method === 'GET') {
                     </body>
                     </html>";
 
-                    // Send email using PHP mail()
-                    // Since local environment might not support real sending, we check return value and log errors gracefully
-                    $mailSent = @mail($to, $subject, $body, $headers);
+                    // Send email using PHPMailer
+                    $result = sendEmailPHPMailer($to, $subject, $body);
                     
-                    if ($mailSent) {
+                    if ($result['status']) {
                         $successCount++;
                         $emailLogStmt->execute([$to, $subject, 'sent', null]);
                     } else {
                         $failCount++;
-                        $errorMsg = "PHP mail() returned false. Check local SMTP server configuration.";
-                        $emailLogStmt->execute([$to, $subject, 'failed', $errorMsg]);
+                        $emailLogStmt->execute([$to, $subject, 'failed', $result['error']]);
                     }
                 }
             }

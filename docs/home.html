@@ -1,0 +1,286 @@
+
+
+<div class="hero-header">
+    
+    <h1 class="hero-title">Every Drop Saves a Life</h1>
+    <p class="hero-subtitle">Connect with donors, schedule local donation drives, and analyze national reserves through Sri Lanka's leading digital blood bank portal.</p>
+    <div class="mt-4 d-flex justify-content-center gap-3">
+        <a href="donation-camps.html" class="btn btn-pill btn-crimson px-4 py-2 fs-6">Find Donation Camps</a>
+        <a href="index.html" class="btn btn-pill btn-outline-crimson text-white border-white-50 px-4 py-2 fs-6" id="hero-portal-btn">Join as a Donor</a>
+    </div>
+</div>
+
+<div class="container overlap-container">
+    <!-- Live Stock Alerts Panel -->
+    <div class="row mb-5" id="stock-alerts-row" style="display: none;">
+        <div class="col-12">
+            <div class="stock-alert-banner d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="fs-2 text-white"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                    <div>
+                        <h4 class="mb-1 text-white font-heading" style="font-size: 20px;">Critical Blood Stock Alert</h4>
+                        <p class="mb-0 text-white-50" id="stock-alert-text">Analyzing blood inventory levels...</p>
+                    </div>
+                </div>
+                <div>
+                    <a href="analytics.html" class="btn btn-pill btn-light btn-sm text-danger fw-bold">View Inventory Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Summary -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="premium-card text-center">
+                <div class="card-title-icon"><i class="bi bi-people-fill"></i></div>
+                <div class="stat-number" id="stat-donors">1,420+</div>
+                <div class="stat-label">Registered Donors</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="premium-card text-center">
+                <div class="card-title-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+                <div class="stat-number" id="stat-donations">2,850+</div>
+                <div class="stat-label">Total Donations</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="premium-card text-center">
+                <div class="card-title-icon"><i class="bi bi-hospital"></i></div>
+                <div class="stat-number">48</div>
+                <div class="stat-label">Partner Facilities</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="premium-card text-center">
+                <div class="card-title-icon"><i class="bi bi-shield-fill-check"></i></div>
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Tested & Certified</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marketing Sections: How It Works, Urgent Requests & Camps Preview -->
+    <div class="row g-4 mb-5 align-items-stretch">
+        <!-- Interactive Information (1/3) -->
+        <div class="col-lg-4">
+            <div class="premium-card h-100">
+                <h2 class="mb-4 font-heading text-dark border-bottom pb-2">The LifeLine Process</h2>
+                
+                <div class="d-flex gap-3 mb-4">
+                    <div class="fs-3 text-danger"><i class="bi bi-1-circle-fill"></i></div>
+                    <div>
+                        <h4 class="font-heading" style="font-size: 18px;">Register & Match</h4>
+                        <p class="text-secondary" style="font-size: 13px;">Register as a donor in seconds. Input your location and blood type to get matched with critical shortages nearby.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mb-4">
+                    <div class="fs-3 text-danger"><i class="bi bi-2-circle-fill"></i></div>
+                    <div>
+                        <h4 class="font-heading" style="font-size: 18px;">Schedule Donation</h4>
+                        <p class="text-secondary" style="font-size: 13px;">Explore scheduled donation camps or log a direct hospital appointment with our easy interface.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <div class="fs-3 text-danger"><i class="bi bi-3-circle-fill"></i></div>
+                    <div>
+                        <h4 class="font-heading" style="font-size: 18px;">Track Impact</h4>
+                        <p class="text-secondary" style="font-size: 13px;">Every bag is tracked with a synthetic barcode. Check your donation impact statistics and save lives.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Urgent Requests (Dynamic from Analytics) (2/3) -->
+        <div class="col-lg-4">
+            <div class="premium-card bg-dark text-white border-0 shadow h-100" style="background-color: #111827 !important; border-radius: 20px;">
+                <h2 class="mb-4 font-heading text-white border-bottom border-secondary pb-2" style="font-size: 28px;">Urgent Requests</h2>
+                <div id="urgent-requests-container" class="d-flex flex-column gap-3">
+                    <!-- Default items for guests (matches screenshot exactly) -->
+                    <div class="p-3 rounded-4 d-flex align-items-center gap-3 border" style="background-color: #1f2937; border-color: rgba(230, 57, 70, 0.3) !important;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white font-heading fw-bold" style="width: 50px; height: 50px; background-color: #e63946; font-size: 18px; min-width: 50px;">O-</div>
+                        <div>
+                            <h5 class="mb-0 text-white font-heading" style="font-size: 16px;">Ratnapura General</h5>
+                            <small class="text-danger fw-bold" style="color: #ff8591 !important; font-size: 12px;">Critical Level</small>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-4 d-flex align-items-center gap-3 border" style="background-color: #1f2937; border-color: rgba(217, 119, 6, 0.3) !important;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-dark font-heading fw-bold" style="width: 50px; height: 50px; background-color: #ffb703; font-size: 18px; min-width: 50px;">AB+</div>
+                        <div>
+                            <h5 class="mb-0 text-white font-heading" style="font-size: 16px;">Balangoda Base</h5>
+                            <small class="text-warning fw-bold" style="color: #ffc83b !important; font-size: 12px;">High Priority</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Camps Preview (3/3) -->
+        <div class="col-lg-4">
+            <div class="premium-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                    <h2 class="font-heading text-dark mb-0">Upcoming Camps</h2>
+                    <a href="donation-camps.html" class="text-danger fw-bold text-decoration-none">View All <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div id="camps-preview-container" class="d-flex flex-column gap-3">
+                    <div class="text-center py-4 text-secondary">
+                        <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading scheduled campaigns...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    const token = localStorage.getItem('ll_token');
+    
+    // Toggle hero button label if logged in
+    if (token) {
+        document.getElementById('hero-portal-btn').textContent = "Go to Dashboard";
+        document.getElementById('hero-portal-btn').href = "donor.html";
+    }
+
+    function escapeHtml(text) {
+        if (text === null || text === undefined) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // Load Live Stock Alerts
+    try {
+        const result = await apiFetch('api/analytics.html');
+        if (result.status === 'success') {
+            const data = result.data;
+            
+            // Update stats cards from CSV records
+            document.getElementById('stat-donations').textContent = Number(data.total_bags).toLocaleString() + "+";
+            document.getElementById('stat-donors').textContent = Number(data.total_bags * 0.55).toFixed(0) + "+"; // Synthetic ratio
+
+            const alerts = data.alerts;
+            const alertRow = document.getElementById('stock-alerts-row');
+            const alertText = document.getElementById('stock-alert-text');
+            
+            if (alerts && alerts.length > 0) {
+                const criticalTypes = alerts.map(a => `${a.blood_type} (${a.available} bags vs ${a.predicted_demand} predicted)`).slice(0, 3).join(', ');
+                alertText.textContent = `The following blood groups are running below forecast demand: ${criticalTypes}. Please donate if you match!`;
+                alertRow.style.display = 'block';
+            }
+        }
+    } catch (e) {
+        console.error('Failed to load stock alerts on homepage', e);
+    }
+
+    // Load Urgent Requests dynamically from Database
+    try {
+        const result = await apiFetch('api/api.html?endpoint=urgent_requests');
+        if (result.status === 'success') {
+            const requests = result.data;
+            const urgentContainer = document.getElementById('urgent-requests-container');
+            urgentContainer.innerHTML = '';
+
+            if (requests && requests.length > 0) {
+                requests.forEach(req => {
+                    const bg = req.blood_type;
+                    const hospitalName = req.hospital_name;
+                    const status = req.status_level;
+                    const isCritical = status.toLowerCase().includes('critical');
+                    
+                    const item = document.createElement('div');
+                    item.className = 'p-3 rounded-4 d-flex align-items-center gap-3 border';
+                    
+                    if (isCritical) {
+                        item.style.cssText = 'background-color: #1f2937; border-color: rgba(230, 57, 70, 0.3) !important;';
+                        item.innerHTML = `
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white font-heading fw-bold" style="width: 50px; height: 50px; background-color: #e63946; font-size: 18px; min-width: 50px;">${escapeHtml(bg)}</div>
+                            <div>
+                                <h5 class="mb-0 text-white font-heading" style="font-size: 16px;">${escapeHtml(hospitalName)}</h5>
+                                <small class="text-danger fw-bold" style="color: #ff8591 !important; font-size: 12px;">${escapeHtml(status)}</small>
+                            </div>
+                        `;
+                    } else {
+                        item.style.cssText = 'background-color: #1f2937; border-color: rgba(217, 119, 6, 0.3) !important;';
+                        item.innerHTML = `
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-dark font-heading fw-bold" style="width: 50px; height: 50px; background-color: #ffb703; font-size: 18px; min-width: 50px;">${escapeHtml(bg)}</div>
+                            <div>
+                                <h5 class="mb-0 text-white font-heading" style="font-size: 16px;">${escapeHtml(hospitalName)}</h5>
+                                <small class="text-warning fw-bold" style="color: #ffc83b !important; font-size: 12px;">${escapeHtml(status)}</small>
+                            </div>
+                        `;
+                    }
+                    urgentContainer.appendChild(item);
+                });
+            } else {
+                urgentContainer.innerHTML = `
+                    <div class="alert alert-dark text-center border p-4 m-0" style="background-color: #1f2937; border-color: rgba(255,255,255,0.1) !important;">
+                        <i class="bi bi-check-circle text-success fs-3 d-block mb-2"></i>
+                        No urgent blood shortage requests at this moment.
+                    </div>
+                `;
+            }
+        }
+    } catch (e) {
+        console.error('Failed to load urgent requests on homepage', e);
+    }
+
+    // Load Camps Preview (Public endpoint)
+    try {
+        const response = await fetch('api/camps.html');
+        const result = await response.json();
+        
+        const container = document.getElementById('camps-preview-container');
+        container.innerHTML = '';
+
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+            // Display first 3 upcoming camps
+            const list = result.data.slice(0, 3);
+            list.forEach(camp => {
+                const dateObj = new Date(camp.date);
+                const day = dateObj.getDate();
+                const month = dateObj.toLocaleString('default', { month: 'short' });
+                
+                const card = document.createElement('div');
+                card.className = 'd-flex align-items-center gap-3 p-3 rounded-4 border';
+                card.innerHTML = `
+                    <div class="text-center bg-danger text-white rounded-3 p-2 d-flex flex-column justify-content-center" style="width: 60px; height: 60px; min-width: 60px;">
+                        <span class="fs-6 fw-bold mb-0">${day}</span>
+                        <span class="text-uppercase" style="font-size: 10px;">${month}</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1 font-heading text-dark" style="font-size: 16px;">${camp.name}</h5>
+                        <p class="mb-0 text-secondary" style="font-size: 13px;"><i class="bi bi-geo-alt me-1"></i>${camp.location}</p>
+                    </div>
+                    <div>
+                        <a href="donation-camps.html" class="btn btn-pill btn-outline-crimson btn-sm">Join</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        } else {
+            container.innerHTML = `
+                <div class="alert alert-light text-center border p-4">
+                    <i class="bi bi-calendar-x text-secondary fs-3 d-block mb-2"></i>
+                    No upcoming donation drives scheduled.
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error('Failed to fetch camps preview', e);
+        document.getElementById('camps-preview-container').innerHTML = `
+            <div class="alert alert-danger text-center">Failed to load donation camps.</div>
+        `;
+    }
+});
+</script>
+
+

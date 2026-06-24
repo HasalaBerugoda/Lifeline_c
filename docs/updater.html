@@ -1,0 +1,1027 @@
+
+
+<script>
+// Allowed for updater and admin roles only
+const auth = checkAuth(['updater', 'admin']);
+</script>
+
+<div class="hero-header">
+    
+    <h1 class="hero-title">Command Center</h1>
+    <p class="hero-subtitle">Log new medical donations, manage physical inventory reserves, and coordinate upcoming camps.</p>
+</div>
+
+<div class="container overlap-container">
+    <div class="row g-4">
+        <!-- Column 1: Inventory & Visualizations -->
+        <div class="col-lg-7">
+            <!-- Physical Stock Adjustments -->
+            <div class="premium-card mb-4">
+                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-boxes text-danger me-2"></i>Physical Reserve Management</h3>
+                <div id="inv-alert" class="alert alert-success" style="display: none;"></div>
+                
+                <form id="inventory-form">
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-oPos" class="form-label font-heading mb-1">O+ Stock</label>
+                            <input type="number" class="form-control" id="inv-oPos" min="0" required>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-aPos" class="form-label font-heading mb-1">A+ Stock</label>
+                            <input type="number" class="form-control" id="inv-aPos" min="0" required>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-bPos" class="form-label font-heading mb-1">B+ Stock</label>
+                            <input type="number" class="form-control" id="inv-bPos" min="0" required>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-abPos" class="form-label font-heading mb-1">AB+ Stock</label>
+                            <input type="number" class="form-control" id="inv-abPos" min="0" required>
+                        </div>
+                        
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-oNeg" class="form-label font-heading mb-1">O- Stock</label>
+                            <input type="number" class="form-control" id="inv-oNeg" min="0" required>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-aNeg" class="form-label font-heading mb-1">A- Stock</label>
+                            <input type="number" class="form-control" id="inv-aNeg" min="0" required>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-bNeg" class="form-label font-heading mb-1">B- Stock</label>
+                            <input type="number" class="form-control" id="inv-bNeg" min="0" required>
+                        </div>
+                        <div class="col-sm-3 col-6">
+                            <label for="inv-abNeg" class="form-label font-heading mb-1">AB- Stock</label>
+                            <input type="number" class="form-control" id="inv-abNeg" min="0" required>
+                        </div>
+                        
+                        <div class="col-sm-6 col-12 mx-auto">
+                            <label for="inv-platelets" class="form-label font-heading mb-1">Platelets Stock</label>
+                            <input type="number" class="form-control text-center fw-bold text-danger border-danger" id="inv-platelets" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-pill btn-crimson w-100 py-2" id="inventory-submit-btn">
+                        <span class="spinner-border spinner-border-sm me-1" id="inv-spinner" style="display: none;"></span>
+                        Update Physical Inventory Counts
+                    </button>
+                </form>
+            </div>
+
+            <!-- Charts for verification -->
+            <div class="row g-4">
+                <div class="col-md-7">
+                    <div class="premium-card">
+                        <h4 class="font-heading text-dark mb-3" style="font-size:16px;">Stock Adequacy Chart</h4>
+                        <div style="position: relative; height: 230px;">
+                            <canvas id="adequacyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="premium-card">
+                        <h4 class="font-heading text-dark mb-3" style="font-size:16px;">Rh Factor Share</h4>
+                        <div style="position: relative; height: 230px;">
+                            <canvas id="rhChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column 2: Log Donation Form -->
+        <div class="col-lg-5">
+            <div class="premium-card">
+                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-journal-plus text-danger me-2"></i>Log New Donation</h3>
+                <div id="donation-alert" class="alert" style="display: none;"></div>
+
+                <form id="donation-form">
+                    <div class="mb-3">
+                        <label for="don-id" class="form-label">Donor ID or Donor Number</label>
+                        <input type="text" class="form-control" id="don-id" placeholder="e.g. LL-0001 or 3" required>
+                        <div class="form-text">Input the unique numerical ID or LL-XXXX donor code.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="don-blood" class="form-label">Blood Type</label>
+                            <select class="form-select" id="don-blood" required>
+                                <option value="" disabled selected>Select Group</option>
+                                <option value="O+">O+</option>
+                                <option value="A+">A+</option>
+                                <option value="B+">B+</option>
+                                <option value="AB+">AB+</option>
+                                <option value="O-">O-</option>
+                                <option value="A-">A-</option>
+                                <option value="B-">B-</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="don-volume" class="form-label">Volume (ml)</label>
+                            <select class="form-select" id="don-volume" required>
+                                <option value="350" selected>350 ml (Single Pack)</option>
+                                <option value="450">450 ml (Double Pack)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="don-hemo" class="form-label">Hemoglobin (g/dL)</label>
+                            <input type="number" step="0.1" class="form-control" id="don-hemo" placeholder="e.g. 13.5">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="don-bp" class="form-label">Blood Pressure</label>
+                            <input type="text" class="form-control" id="don-bp" placeholder="e.g. 120/80">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="don-weight" class="form-label">Weight (kg)</label>
+                            <input type="number" step="0.1" class="form-control" id="don-weight" placeholder="e.g. 68.5">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="don-date" class="form-label">Donation Date</label>
+                            <input type="date" class="form-control" id="don-date" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="don-location" class="form-label">Facility Location</label>
+                        <input type="text" class="form-control" id="don-location" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-pill btn-crimson w-100 py-3" id="donation-submit-btn">
+                        <span class="spinner-border spinner-border-sm me-1" id="don-spinner" style="display: none;"></span>
+                        Record Donation & Sync CSV
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row: Camp Management -->
+    <div class="row g-4 mt-3">
+        <!-- Create Camp -->
+        <div class="col-lg-5">
+            <div class="premium-card">
+                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-calendar-plus text-danger me-2"></i>Create Donation Camp</h3>
+                <div id="camp-alert" class="alert" style="display: none;"></div>
+
+                <form id="camp-form">
+                    <div class="mb-3">
+                        <label for="camp-name" class="form-label">Camp Campaign Name</label>
+                        <input type="text" class="form-control" id="camp-name" placeholder="e.g. Kandy Town Hall Drive" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="camp-date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="camp-date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="camp-time" class="form-label">Start Time</label>
+                            <input type="time" class="form-control" id="camp-time" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="camp-loc" class="form-label">Location Address</label>
+                            <input type="text" class="form-control" id="camp-loc" placeholder="City or Hall Name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="camp-org" class="form-label">Organizer Entity</label>
+                            <input type="text" class="form-control" id="camp-org" placeholder="e.g. Red Cross" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="camp-desc" class="form-label">Camp Details / Description</label>
+                        <textarea class="form-control" id="camp-desc" rows="3" placeholder="Additional requirements or details..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-pill btn-crimson w-100 py-3" id="camp-submit-btn">
+                        <span class="spinner-border spinner-border-sm me-1" id="camp-spinner" style="display: none;"></span>
+                        Publish Camp & Notify Donors
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Camps List with Delete -->
+        <div class="col-lg-7">
+            <div class="premium-card">
+                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-table text-danger me-2"></i>Active Campaigns</h3>
+                <div id="camp-list-alert" class="alert alert-success" style="display: none;"></div>
+                
+                <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Campaign / Date</th>
+                                <th>Location</th>
+                                <th>Organizer</th>
+                                <th>Registered</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="camps-list-body">
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-secondary">
+                                    <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading active campaigns...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row: Urgent Requests Management -->
+    <div class="row g-4 mt-3">
+        <!-- Add/Edit Urgent Request Form -->
+        <div class="col-lg-5">
+            <div class="premium-card">
+                <h3 class="font-heading text-dark mb-3 border-bottom pb-2" id="urgent-form-title"><i class="bi bi-exclamation-octagon text-danger me-2"></i>Add Urgent Request</h3>
+                <div id="urgent-alert" class="alert" style="display: none;"></div>
+
+                <form id="urgent-form">
+                    <input type="hidden" id="urgent-id">
+                    
+                    <div class="mb-3">
+                        <label for="urgent-blood" class="form-label font-heading mb-1">Blood Group</label>
+                        <select class="form-select" id="urgent-blood" required>
+                            <option value="" disabled selected>Select Group</option>
+                            <option value="O+">O+</option>
+                            <option value="A+">A+</option>
+                            <option value="B+">B+</option>
+                            <option value="AB+">AB+</option>
+                            <option value="O-">O-</option>
+                            <option value="A-">A-</option>
+                            <option value="B-">B-</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="urgent-hospital" class="form-label font-heading mb-1">Hospital / Location</label>
+                        <input type="text" class="form-control" id="urgent-hospital" placeholder="e.g. Badulla General Hospital" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="urgent-status" class="form-label font-heading mb-1">Urgency Level</label>
+                        <select class="form-select" id="urgent-status" required>
+                            <option value="Critical Level" selected>Critical Level</option>
+                            <option value="High Priority">High Priority</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-pill btn-crimson flex-grow-1 py-3" id="urgent-submit-btn">
+                            <span class="spinner-border spinner-border-sm me-1" id="urgent-spinner" style="display: none;"></span>
+                            <span id="urgent-submit-text">Add Urgent Request</span>
+                        </button>
+                        <button type="button" class="btn btn-pill btn-outline-secondary px-3 py-3" id="urgent-cancel-btn" style="display: none;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Urgent Requests List with Actions -->
+        <div class="col-lg-7">
+            <div class="premium-card">
+                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-card-list text-danger me-2"></i>Active Urgent Requests</h3>
+                <div id="urgent-list-alert" class="alert alert-success" style="display: none;"></div>
+                
+                <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Blood Type</th>
+                                <th>Hospital</th>
+                                <th>Urgency Level</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="urgent-list-body">
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-secondary">
+                                    <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading urgent requests...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Participants Roster Modal -->
+<div class="modal fade" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+            <div class="modal-header bg-dark text-white p-3 border-0 d-flex justify-content-between align-items-center">
+                <h5 class="modal-title font-heading" id="participantsModalLabel">
+                    <i class="bi bi-people-fill text-danger me-2"></i>Registered Participants
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 bg-light">
+                <div class="table-responsive" style="max-height: 400px;">
+                    <table class="table table-hover align-middle mb-0" style="font-size: 14px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e5e7eb;">
+                                <th>Participant</th>
+                                <th>Contact Information</th>
+                                <th>Blood Group</th>
+                                <th>Attendance Check-In</th>
+                            </tr>
+                        </thead>
+                        <tbody id="participants-list-body">
+                            <!-- Dynamic roster entries -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    // Fill facility location default with updater's hospital if available
+    const userObj = auth.user;
+    if (userObj.facility_name) {
+        document.getElementById('don-location').value = userObj.facility_name;
+    }
+    
+    // Set default donation date as today
+    document.getElementById('don-date').value = new Date().toISOString().substring(0, 10);
+    document.getElementById('camp-date').value = new Date().toISOString().substring(0, 10);
+
+    // Global dashboard metrics and inventory storage
+    let currentInventory = {};
+    let forecastDemand = {};
+    
+    let adequacyChartInstance = null;
+    let rhChartInstance = null;
+
+    // Load initial data
+    await loadInventory();
+    await loadForecastDemand();
+    renderCharts();
+    await loadCamps();
+    await loadUrgentRequests();
+
+    // ----------------------------------------------------
+    // Load Inventory (Database)
+    // ----------------------------------------------------
+    async function loadInventory() {
+        try {
+            const result = await apiFetch('api/inventory.html');
+            if (result.status === 'success') {
+                currentInventory = result.data;
+                
+                // Pre-fill form fields
+                document.getElementById('inv-oPos').value = currentInventory.oPos;
+                document.getElementById('inv-aPos').value = currentInventory.aPos;
+                document.getElementById('inv-bPos').value = currentInventory.bPos;
+                document.getElementById('inv-abPos').value = currentInventory.abPos;
+                document.getElementById('inv-oNeg').value = currentInventory.oNeg;
+                document.getElementById('inv-aNeg').value = currentInventory.aNeg;
+                document.getElementById('inv-bNeg').value = currentInventory.bNeg;
+                document.getElementById('inv-abNeg').value = currentInventory.abNeg;
+                document.getElementById('inv-platelets').value = currentInventory.platelets;
+            }
+        } catch (e) {
+            console.error('Failed to load inventory data', e);
+        }
+    }
+
+    // ----------------------------------------------------
+    // Load Forecast Demand (CSV analytics API)
+    // ----------------------------------------------------
+    async function loadForecastDemand() {
+        try {
+            const result = await apiFetch('api/analytics.html');
+            if (result.status === 'success') {
+                const forecastData = result.data.forecast;
+                // Map the forecast month1 (next month) to match the keys of currentInventory
+                forecastDemand = {
+                    'oPos': forecastData['O+']?.month1 || 0,
+                    'aPos': forecastData['A+']?.month1 || 0,
+                    'bPos': forecastData['B+']?.month1 || 0,
+                    'abPos': forecastData['AB+']?.month1 || 0,
+                    'oNeg': forecastData['O-']?.month1 || 0,
+                    'aNeg': forecastData['A-']?.month1 || 0,
+                    'bNeg': forecastData['B-']?.month1 || 0,
+                    'abNeg': forecastData['AB-']?.month1 || 0
+                };
+            }
+        } catch (e) {
+            console.error('Failed to load forecast data', e);
+        }
+    }
+
+    // ----------------------------------------------------
+    // Inventory Form Submit
+    // ----------------------------------------------------
+    const invForm = document.getElementById('inventory-form');
+    const invAlert = document.getElementById('inv-alert');
+    const invSpinner = document.getElementById('inv-spinner');
+    const invBtn = document.getElementById('inventory-submit-btn');
+
+    // Helper to safely parse integer
+    function toInt(val) {
+        return parseInt(val, 10) || 0;
+    }
+
+    invForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        invAlert.style.display = 'none';
+        invSpinner.style.display = 'inline-block';
+        invBtn.setAttribute('disabled', 'true');
+
+        const payload = {
+            oPos: toInt(document.getElementById('inv-oPos').value),
+            aPos: toInt(document.getElementById('inv-aPos').value),
+            bPos: toInt(document.getElementById('inv-bPos').value),
+            abPos: toInt(document.getElementById('inv-abPos').value),
+            oNeg: toInt(document.getElementById('inv-oNeg').value),
+            aNeg: toInt(document.getElementById('inv-aNeg').value),
+            bNeg: toInt(document.getElementById('inv-bNeg').value),
+            abNeg: toInt(document.getElementById('inv-abNeg').value),
+            platelets: toInt(document.getElementById('inv-platelets').value)
+        };
+
+        try {
+            const result = await apiFetch('api/inventory.html', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            if (result.status === 'success') {
+                invAlert.textContent = "Physical inventory updated and verified.";
+                invAlert.style.display = 'block';
+                
+                // Reload metrics locally and refresh charts
+                currentInventory = { ...currentInventory, ...payload };
+                renderCharts();
+            }
+        } catch (error) {
+            alert("Error: " + error.message);
+        } finally {
+            invSpinner.style.display = 'none';
+            invBtn.removeAttribute('disabled');
+        }
+    });
+
+    // ----------------------------------------------------
+    // Chart.js Rendering Logic
+    // ----------------------------------------------------
+    function renderCharts() {
+        // A. Adequacy Bar Chart
+        const barCtx = document.getElementById('adequacyChart').getContext('2d');
+        const labels = ['O+', 'A+', 'B+', 'AB+', 'O-', 'A-', 'B-', 'AB-'];
+        
+        // Match inventory fields
+        const values = [
+            currentInventory.oPos || 0,
+            currentInventory.aPos || 0,
+            currentInventory.bPos || 0,
+            currentInventory.abPos || 0,
+            currentInventory.oNeg || 0,
+            currentInventory.aNeg || 0,
+            currentInventory.bNeg || 0,
+            currentInventory.abNeg || 0
+        ];
+
+        const demands = [
+            forecastDemand.oPos || 0,
+            forecastDemand.aPos || 0,
+            forecastDemand.bPos || 0,
+            forecastDemand.abPos || 0,
+            forecastDemand.oNeg || 0,
+            forecastDemand.aNeg || 0,
+            forecastDemand.bNeg || 0,
+            forecastDemand.abNeg || 0
+        ];
+
+        // Color bars: green if stock >= demand, red if stock < demand
+        const backgroundColors = values.map((val, idx) => {
+            return val >= demands[idx] ? '#059669' : '#dc2626';
+        });
+
+        if (adequacyChartInstance) adequacyChartInstance.destroy();
+        
+        adequacyChartInstance = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Physical Count',
+                    data: values,
+                    backgroundColor: backgroundColors,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // B. Rh factor Share Donut
+        const donutCtx = document.getElementById('rhChart').getContext('2d');
+        
+        const posSum = (currentInventory.oPos || 0) + (currentInventory.aPos || 0) + (currentInventory.bPos || 0) + (currentInventory.abPos || 0);
+        const negSum = (currentInventory.oNeg || 0) + (currentInventory.aNeg || 0) + (currentInventory.bNeg || 0) + (currentInventory.abNeg || 0);
+
+        if (rhChartInstance) rhChartInstance.destroy();
+        
+        rhChartInstance = new Chart(donutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Rh Positive (+)', 'Rh Negative (-)'],
+                datasets: [{
+                    data: [posSum, negSum],
+                    backgroundColor: ['#e63946', '#111827'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    // ----------------------------------------------------
+    // Log Donation Submission
+    // ----------------------------------------------------
+    const donForm = document.getElementById('donation-form');
+    const donAlert = document.getElementById('donation-alert');
+    const donSpinner = document.getElementById('don-spinner');
+    const donBtn = document.getElementById('donation-submit-btn');
+
+    donForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        donAlert.style.display = 'none';
+        donSpinner.style.display = 'inline-block';
+        donBtn.setAttribute('disabled', 'true');
+
+        const donor_id       = document.getElementById('don-id').value;
+        const blood_type     = document.getElementById('don-blood').value;
+        const volume_ml      = toInt(document.getElementById('don-volume').value);
+        const hemoglobin     = document.getElementById('don-hemo').value ? parseFloat(document.getElementById('don-hemo').value) : null;
+        const blood_pressure = document.getElementById('don-bp').value;
+        const weight         = document.getElementById('don-weight').value ? parseFloat(document.getElementById('don-weight').value) : null;
+        const donation_date  = document.getElementById('don-date').value;
+        const location       = document.getElementById('don-location').value;
+
+        try {
+            const result = await apiFetch('api/donations.html', {
+                method: 'POST',
+                body: JSON.stringify({
+                    donor_id, blood_type, volume_ml, hemoglobin, blood_pressure, weight, donation_date, location
+                })
+            });
+
+            if (result.status === 'success') {
+                donAlert.className = "alert alert-success";
+                donAlert.innerHTML = `<strong>Success!</strong> Donation logged. Bag ID assigned: <code>${result.data.bag_id}</code>.`;
+                donAlert.style.display = 'block';
+                
+                donForm.reset();
+                // Retain date and location defaults
+                document.getElementById('don-date').value = new Date().toISOString().substring(0, 10);
+                if (userObj.facility_name) {
+                    document.getElementById('don-location').value = userObj.facility_name;
+                }
+
+                // Reload inventory counts locally & update charts
+                await loadInventory();
+                renderCharts();
+            }
+        } catch (error) {
+            donAlert.className = "alert alert-danger";
+            donAlert.textContent = error.message || "Failed to log donation.";
+            donAlert.style.display = 'block';
+        } finally {
+            donSpinner.style.display = 'none';
+            donBtn.removeAttribute('disabled');
+        }
+    });
+
+    // ----------------------------------------------------
+    // Camps Management (Creation & List)
+    // ----------------------------------------------------
+    const campForm = document.getElementById('camp-form');
+    const campAlert = document.getElementById('camp-alert');
+    const campSpinner = document.getElementById('camp-spinner');
+    const campBtn = document.getElementById('camp-submit-btn');
+
+    campForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        campAlert.style.display = 'none';
+        campSpinner.style.display = 'inline-block';
+        campBtn.setAttribute('disabled', 'true');
+
+        const name        = document.getElementById('camp-name').value;
+        const date        = document.getElementById('camp-date').value;
+        const time        = document.getElementById('camp-time').value;
+        const location    = document.getElementById('camp-loc').value;
+        const organizer   = document.getElementById('camp-org').value;
+        const description = document.getElementById('camp-desc').value;
+
+        try {
+            const result = await apiFetch('api/camps.html', {
+                method: 'POST',
+                body: JSON.stringify({ name, date, time, location, organizer, description })
+            });
+
+            if (result.status === 'success') {
+                campAlert.className = "alert alert-success";
+                campAlert.textContent = result.message;
+                campAlert.style.display = 'block';
+
+                campForm.reset();
+                document.getElementById('camp-date').value = new Date().toISOString().substring(0, 10);
+                
+                await loadCamps(); // Reload camp list
+            }
+        } catch (error) {
+            campAlert.className = "alert alert-danger";
+            campAlert.textContent = error.message || "Failed to publish camp.";
+            campAlert.style.display = 'block';
+        } finally {
+            campSpinner.style.display = 'none';
+            campBtn.removeAttribute('disabled');
+        }
+    });
+
+    // Escape HTML helper
+    function escapeHtml(text) {
+        if (text === null || text === undefined) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // Load active camps in list
+    async function loadCamps() {
+        const tbody = document.getElementById('camps-list-body');
+        const alertList = document.getElementById('camp-list-alert');
+
+        try {
+            const result = await apiFetch('api/camps.html?action=all');
+            if (result.status === 'success') {
+                tbody.innerHTML = '';
+                const camps = result.data;
+
+                if (camps.length > 0) {
+                    camps.forEach(camp => {
+                        const tr = document.createElement('tr');
+                        const isDeletable = userObj.role === 'updater' || userObj.role === 'admin';
+                        const btnState = isDeletable ? '' : 'disabled title="Only Authorized Staff/Admins can delete campaigns"';
+
+                        tr.innerHTML = `
+                            <td>
+                                <strong>${escapeHtml(camp.name)}</strong><br>
+                                <small class="text-secondary"><i class="bi bi-calendar3 me-1"></i>${escapeHtml(camp.date)}</small>
+                            </td>
+                            <td>${escapeHtml(camp.location)}</td>
+                            <td>${escapeHtml(camp.organizer)}</td>
+                            <td>
+                                <span class="badge bg-danger rounded-pill px-3 py-2 cursor-pointer hover-effect-scale" onclick="openParticipantsModal(${camp.id}, '${escapeHtml(camp.name)}')">
+                                    <i class="bi bi-people-fill me-1"></i> ${camp.registered_count || 0}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <button onclick="deleteCamp(${camp.id})" class="btn btn-sm btn-outline-danger btn-pill" ${btnState}>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center py-3 text-secondary">No campaigns scheduled.</td>
+                        </tr>
+                    `;
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load campaigns list', e);
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-danger py-3">Failed to load campaigns.</td>
+                </tr>
+            `;
+        }
+    }
+
+    // Participants modal helper
+    window.openParticipantsModal = async function(campId, campName) {
+        const titleEl = document.getElementById('participantsModalLabel');
+        titleEl.innerHTML = `<i class="bi bi-people-fill text-danger me-2"></i>Roster: ${escapeHtml(campName)}`;
+        
+        const tbody = document.getElementById('participants-list-body');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center py-4 text-secondary">
+                    <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading participants...
+                </td>
+            </tr>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('participantsModal'));
+        modal.show();
+
+        try {
+            const result = await apiFetch(`api/camps.html?action=participants&id=${campId}`);
+            if (result.status === 'success') {
+                tbody.innerHTML = '';
+                const list = result.data;
+                if (list.length > 0) {
+                    list.forEach(p => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>
+                                <strong>${escapeHtml(p.donor_number || 'Pending')}</strong><br>
+                                <span class="fw-semibold text-dark">${escapeHtml(p.fullName)}</span>
+                            </td>
+                            <td>
+                                <small>${escapeHtml(p.email)}</small><br>
+                                <small class="text-secondary">${escapeHtml(p.phone)}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-danger rounded-pill px-2 py-1">${escapeHtml(p.bloodType)}</span>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="att-switch-${p.registration_id}" ${parseInt(p.attended, 10) ? 'checked' : ''} onchange="toggleAttendance(this, ${p.registration_id})">
+                                    <label class="form-check-label text-secondary" style="font-size: 12px;" for="att-switch-${p.registration_id}">Attended</label>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-secondary">No participants registered for this camp yet.</td>
+                        </tr>
+                    `;
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-danger py-4">Failed to load participant list.</td>
+                </tr>
+            `;
+        }
+    };
+
+    // Toggle participant attendance
+    window.toggleAttendance = async function(checkbox, registrationId) {
+        checkbox.disabled = true;
+        const attended = checkbox.checked;
+        try {
+            const result = await apiFetch('api/camps.html?action=toggle_attendance', {
+                method: 'POST',
+                body: JSON.stringify({ registration_id: registrationId, attended: attended })
+            });
+            if (result.status !== 'success') {
+                throw new Error(result.message || 'Update failed');
+            }
+        } catch (e) {
+            alert(e.message || "Failed to update attendance.");
+            checkbox.checked = !attended; // Revert
+        } finally {
+            checkbox.disabled = false;
+        }
+    };
+
+    // Delete Camp
+    window.deleteCamp = async function(campId) {
+        if (!confirm("Are you sure you want to permanently delete this camp campaign? All donor registrations for this camp will be deleted.")) {
+            return;
+        }
+
+        const alertList = document.getElementById('camp-list-alert');
+        alertList.style.display = 'none';
+
+        try {
+            const result = await apiFetch(`api/camps.html?id=${campId}`, {
+                method: 'DELETE'
+            });
+
+            if (result.status === 'success') {
+                alertList.textContent = "Campaign successfully deleted.";
+                alertList.style.display = 'block';
+                await loadCamps(); // Reload
+            }
+        } catch (error) {
+            alert(error.message || "Deletion failed.");
+        }
+    };
+
+    // ----------------------------------------------------
+    // Urgent Requests Management
+    // ----------------------------------------------------
+    const urgentForm       = document.getElementById('urgent-form');
+    const urgentAlert      = document.getElementById('urgent-alert');
+    const urgentSpinner    = document.getElementById('urgent-spinner');
+    const urgentSubmitBtn  = document.getElementById('urgent-submit-btn');
+    const urgentSubmitText = document.getElementById('urgent-submit-text');
+    const urgentCancelBtn  = document.getElementById('urgent-cancel-btn');
+    const urgentFormTitle  = document.getElementById('urgent-form-title');
+    const urgentListAlert  = document.getElementById('urgent-list-alert');
+
+    async function loadUrgentRequests() {
+        const tbody = document.getElementById('urgent-list-body');
+        try {
+            const result = await apiFetch('api/api.html?endpoint=urgent_requests');
+            if (result.status === 'success') {
+                tbody.innerHTML = '';
+                const requests = result.data;
+
+                if (requests.length > 0) {
+                    requests.forEach(req => {
+                        const tr = document.createElement('tr');
+                        const bg = req.blood_type;
+                        const hospital = req.hospital_name;
+                        const status = req.status_level;
+                        const isCritical = status.toLowerCase().includes('critical');
+                        
+                        // Define background color based on severity
+                        const circleColor = isCritical ? '#e63946' : '#ffb703';
+                        const textColor = isCritical ? '#ffffff' : '#111827';
+                        const badgeClass = isCritical ? 'bg-danger' : 'bg-warning text-dark';
+
+                        tr.innerHTML = `
+                            <td>
+                                <div class="rounded-circle d-flex align-items-center justify-content-center font-heading fw-bold shadow-sm" 
+                                     style="width: 40px; height: 40px; background-color: ${circleColor}; color: ${textColor}; font-size: 14px;">
+                                    ${escapeHtml(bg)}
+                                </div>
+                            </td>
+                            <td><strong class="text-dark">${escapeHtml(hospital)}</strong></td>
+                            <td><span class="badge rounded-pill px-3 py-2 ${badgeClass}">${escapeHtml(status)}</span></td>
+                            <td class="text-end">
+                                <button onclick="editUrgentRequest(${req.id}, '${escapeHtml(bg)}', '${escapeHtml(hospital).replace(/'/g, "\\'")}', '${escapeHtml(status)}')" class="btn btn-sm btn-outline-primary btn-pill me-1" title="Edit Request">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button onclick="deleteUrgentRequest(${req.id})" class="btn btn-sm btn-outline-danger btn-pill" title="Delete Request">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center py-3 text-secondary">No urgent requests active.</td>
+                        </tr>
+                    `;
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load urgent requests', e);
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-danger py-3">Failed to load urgent requests.</td>
+                </tr>
+            `;
+        }
+    }
+
+    // Submit handler (handles both Add and Edit)
+    urgentForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        urgentAlert.style.display = 'none';
+        urgentSpinner.style.display = 'inline-block';
+        urgentSubmitBtn.setAttribute('disabled', 'true');
+
+        const id            = document.getElementById('urgent-id').value;
+        const blood_type    = document.getElementById('urgent-blood').value;
+        const hospital_name = document.getElementById('urgent-hospital').value;
+        const status_level  = document.getElementById('urgent-status').value;
+
+        const isEdit = id && parseInt(id) > 0;
+        const url = 'api/api.html?endpoint=urgent_requests';
+        const method = isEdit ? 'PUT' : 'POST';
+        const bodyData = isEdit ? { id: parseInt(id), blood_type, hospital_name, status_level } : { blood_type, hospital_name, status_level };
+
+        try {
+            const result = await apiFetch(url, {
+                method: method,
+                body: JSON.stringify(bodyData)
+            });
+
+            if (result.status === 'success') {
+                urgentAlert.className = "alert alert-success";
+                urgentAlert.textContent = result.message;
+                urgentAlert.style.display = 'block';
+                
+                resetUrgentForm();
+                await loadUrgentRequests();
+            }
+        } catch (error) {
+            urgentAlert.className = "alert alert-danger";
+            urgentAlert.textContent = error.message || "Operation failed.";
+            urgentAlert.style.display = 'block';
+        } finally {
+            urgentSpinner.style.display = 'none';
+            urgentSubmitBtn.removeAttribute('disabled');
+        }
+    });
+
+    // Enter Edit Mode
+    window.editUrgentRequest = function(id, blood_type, hospital_name, status_level) {
+        urgentAlert.style.display = 'none';
+        
+        document.getElementById('urgent-id').value = id;
+        document.getElementById('urgent-blood').value = blood_type;
+        document.getElementById('urgent-hospital').value = hospital_name;
+        document.getElementById('urgent-status').value = status_level;
+
+        urgentFormTitle.innerHTML = `<i class="bi bi-pencil-square text-primary me-2"></i>Edit Urgent Request`;
+        urgentSubmitText.textContent = "Save Changes";
+        urgentCancelBtn.style.display = 'inline-block';
+        
+        // Scroll to form smoothly
+        urgentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    // Cancel Edit Mode
+    urgentCancelBtn.addEventListener('click', resetUrgentForm);
+
+    function resetUrgentForm() {
+        urgentForm.reset();
+        document.getElementById('urgent-id').value = '';
+        urgentFormTitle.innerHTML = `<i class="bi bi-exclamation-octagon text-danger me-2"></i>Add Urgent Request`;
+        urgentSubmitText.textContent = "Add Urgent Request";
+        urgentCancelBtn.style.display = 'none';
+        urgentAlert.style.display = 'none';
+    }
+
+    // Delete Request
+    window.deleteUrgentRequest = async function(id) {
+        if (!confirm("Are you sure you want to delete this urgent blood shortage request?")) {
+            return;
+        }
+
+        urgentListAlert.style.display = 'none';
+
+        try {
+            const result = await apiFetch(`api/api.html?endpoint=urgent_requests&id=${id}`, {
+                method: 'DELETE'
+            });
+
+            if (result.status === 'success') {
+                urgentListAlert.textContent = "Urgent request successfully removed.";
+                urgentListAlert.style.display = 'block';
+                
+                // If we were editing this particular item, reset the form
+                const currentEditId = document.getElementById('urgent-id').value;
+                if (currentEditId && parseInt(currentEditId) === id) {
+                    resetUrgentForm();
+                }
+
+                await loadUrgentRequests();
+            }
+        } catch (error) {
+            alert(error.message || "Deletion failed.");
+        }
+    };
+});
+</script>
+
+
+
