@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Donor Dashboard";
 $activePage = "dashboard";
-require_once __DIR__ . '/includes/head.php';
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <!-- Block guest access early -->
@@ -48,7 +48,7 @@ const auth = checkAuth(['donor', 'updater', 'admin']);
                 </div>
 
                 <div class="d-flex flex-column gap-2">
-                    <a href="donor-profile.php" class="btn btn-pill btn-outline-crimson btn-sm"><i class="bi bi-pencil-square me-1"></i> Edit Profile</a>
+                    <a href="profile.php" class="btn btn-pill btn-outline-crimson btn-sm"><i class="bi bi-pencil-square me-1"></i> Edit Profile</a>
                 </div>
             </div>
         </div>
@@ -82,7 +82,6 @@ const auth = checkAuth(['donor', 'updater', 'admin']);
 
             <!-- Donation Eligibility Status Card -->
             <div class="premium-card mb-4 position-relative overflow-hidden" id="eligibility-card" style="display: none;">
-                <!-- Checked top-right badge -->
                 <div id="eligibility-badge" class="position-absolute" style="top: 24px; right: 24px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold;">
                 </div>
                 
@@ -92,7 +91,7 @@ const auth = checkAuth(['donor', 'updater', 'admin']);
                     <p class="text-secondary mb-4" id="eligibility-desc" style="max-width: 80%; font-size: 14px;">
                         It has been over 120 days since your last donation. You are fully recovered and safe to donate blood again.
                     </p>
-                    <a href="donation-camps.php" class="btn btn-pill btn-crimson px-4 py-2 fs-6" id="eligibility-btn">Find a Camp Near You</a>
+                    <a href="../donation-camps.php" class="btn btn-pill btn-crimson px-4 py-2 fs-6" id="eligibility-btn">Find a Camp Near You</a>
                 </div>
             </div>
 
@@ -117,14 +116,14 @@ const auth = checkAuth(['donor', 'updater', 'admin']);
                     <div class="premium-card h-100">
                         <h3 class="mb-3 font-heading text-dark border-bottom pb-2">Donation Options</h3>
                         <div class="d-flex flex-column gap-3">
-                            <a href="donor-history.php" class="p-3 border rounded-4 d-flex align-items-center gap-3 text-decoration-none text-dark hover-effect-light">
+                            <a href="settings.php" class="p-3 border rounded-4 d-flex align-items-center gap-3 text-decoration-none text-dark hover-effect-light">
                                 <div class="fs-2 text-danger"><i class="bi bi-clock-history"></i></div>
                                 <div>
                                     <h5 class="mb-1 font-heading" style="font-size: 15px;">View Full History</h5>
                                     <small class="text-secondary" style="font-size: 12px;">Check details of all your logged donations.</small>
                                 </div>
                             </a>
-                            <a href="donation-camps.php" class="p-3 border rounded-4 d-flex align-items-center gap-3 text-decoration-none text-dark hover-effect-light">
+                            <a href="../donation-camps.php" class="p-3 border rounded-4 d-flex align-items-center gap-3 text-decoration-none text-dark hover-effect-light">
                                 <div class="fs-2 text-danger"><i class="bi bi-calendar-event"></i></div>
                                 <div>
                                     <h5 class="mb-1 font-heading" style="font-size: 15px;">Register for a Camp</h5>
@@ -141,7 +140,6 @@ const auth = checkAuth(['donor', 'updater', 'admin']);
 
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
-    // Render profile details from local storage session
     const user = auth.user;
     
     document.getElementById('dash-fullname').textContent = user.fullName;
@@ -151,7 +149,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('dash-phone').textContent = user.phone;
     document.getElementById('dash-location').textContent = `${user.town}, ${user.district} District (${user.province} Province)`;
 
-    // Fetch live donation summary stats via API
     try {
         const result = await apiFetch('api/donations.php');
         if (result.status === 'success') {
@@ -161,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById('impact-lives').textContent = summary.lives_saved_estimate;
             document.getElementById('impact-last-date').textContent = summary.last_donation_date ? summary.last_donation_date : 'Never';
 
-            // Calculate eligibility (120-day interval)
             let isEligible = true;
             let daysDiff = 0;
             let daysRemaining = 0;
@@ -209,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
                 
                 btn.textContent = "Find a Camp Near You";
-                btn.href = "donation-camps.php";
+                btn.href = "../donation-camps.php";
             } else {
                 container.style.borderColor = '#d97706';
                 subtitle.style.color = '#d97706';
@@ -226,7 +222,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 desc.textContent = `You last donated on ${formattedLastDate} (${daysDiff} days ago). Please wait another ${daysRemaining} days before you can donate blood again for your safety.`;
                 btn.textContent = "View Donation History";
-                btn.href = "donor-history.php";
+                btn.href = "settings.php";
             }
             
             card.style.display = 'block';

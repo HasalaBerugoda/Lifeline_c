@@ -2,7 +2,6 @@
 // API Camps Handler: CRUD, Registrations, and Participants
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/jwt.php';
-require_once __DIR__ . '/../includes/mail_helper.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -223,14 +222,16 @@ if ($method === 'GET') {
                     </html>";
 
                     // Send email using PHPMailer
-                    $result = sendEmailPHPMailer($to, $subject, $body);
+                    require_once __DIR__ . '/../includes/mail_helper.php';
+                    $errorMsg = null;
+                    $mailSent = sendEmail($to, $subject, $body, $errorMsg);
                     
-                    if ($result['status']) {
+                    if ($mailSent) {
                         $successCount++;
                         $emailLogStmt->execute([$to, $subject, 'sent', null]);
                     } else {
                         $failCount++;
-                        $emailLogStmt->execute([$to, $subject, 'failed', $result['error']]);
+                        $emailLogStmt->execute([$to, $subject, 'failed', $errorMsg]);
                     }
                 }
             }

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "My Donation History";
 $activePage = "dashboard";
-require_once __DIR__ . '/includes/head.php';
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <script>
@@ -43,7 +43,7 @@ const auth = checkAuth(['donor', 'updater', 'admin']);
             <div class="premium-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="font-heading text-dark mb-0">Donation Logs</h3>
-                    <a href="donor.php" class="btn btn-pill btn-outline-crimson btn-sm"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+                    <a href="dashboard.php" class="btn btn-pill btn-outline-crimson btn-sm"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
                 </div>
 
                 <div class="table-responsive">

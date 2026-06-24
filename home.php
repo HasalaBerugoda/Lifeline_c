@@ -15,23 +15,6 @@ require_once __DIR__ . '/includes/head.php';
 </div>
 
 <div class="container overlap-container">
-    <!-- Live Stock Alerts Panel -->
-    <div class="row mb-5" id="stock-alerts-row" style="display: none;">
-        <div class="col-12">
-            <div class="stock-alert-banner d-flex align-items-center justify-content-between flex-wrap gap-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="fs-2 text-white"><i class="bi bi-exclamation-triangle-fill"></i></div>
-                    <div>
-                        <h4 class="mb-1 text-white font-heading" style="font-size: 20px;">Critical Blood Stock Alert</h4>
-                        <p class="mb-0 text-white-50" id="stock-alert-text">Analyzing blood inventory levels...</p>
-                    </div>
-                </div>
-                <div>
-                    <a href="analytics.php" class="btn btn-pill btn-light btn-sm text-danger fw-bold">View Inventory Dashboard</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Quick Stats Summary -->
     <div class="row g-4 mb-5">
@@ -146,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Toggle hero button label if logged in
     if (token) {
         document.getElementById('hero-portal-btn').textContent = "Go to Dashboard";
-        document.getElementById('hero-portal-btn').href = "donor.php";
+        document.getElementById('hero-portal-btn').href = "index.php";
     }
 
     function escapeHtml(text) {
@@ -172,13 +155,26 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById('stat-donors').textContent = Number(data.total_bags * 0.55).toFixed(0) + "+"; // Synthetic ratio
 
             const alerts = data.alerts;
-            const alertRow = document.getElementById('stock-alerts-row');
-            const alertText = document.getElementById('stock-alert-text');
             
             if (alerts && alerts.length > 0) {
-                const criticalTypes = alerts.map(a => `${a.blood_type} (${a.available} bags vs ${a.predicted_demand} predicted)`).slice(0, 3).join(', ');
-                alertText.textContent = `The following blood groups are running below forecast demand: ${criticalTypes}. Please donate if you match!`;
-                alertRow.style.display = 'block';
+                const criticalGroups = alerts.map(a => a.blood_type).join(', ');
+                
+                // Populate modal text
+                const modalText = document.getElementById('stock-alert-modal-text');
+                if (modalText) {
+                    modalText.innerHTML = `<strong>Attention!</strong> The following blood groups are running critically low:<br><span class="text-danger fw-bold d-block my-2" style="font-size: 26px; letter-spacing: 2px; text-shadow: 0 0 10px rgba(230,57,70,0.3);">${criticalGroups}</span>Please donate if you match a critical group! Your donation can save lives today.`;
+                }
+                
+                // Rate-limit alert modal to once every 24 hours
+                const lastShown = localStorage.getItem('ll_last_alert_shown');
+                const now = Date.now();
+                const oneDayMs = 24 * 60 * 60 * 1000;
+                
+                if (!lastShown || (now - lastShown > oneDayMs)) {
+                    const alertModal = new bootstrap.Modal(document.getElementById('criticalAlertModal'));
+                    alertModal.show();
+                    localStorage.setItem('ll_last_alert_shown', now);
+                }
             }
         }
     } catch (e) {
@@ -286,5 +282,48 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 </script>
+
+<style>
+.hover-scale {
+    transition: all 0.2s ease-in-out;
+}
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+.modal-backdrop.show {
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+</style>
+
+<!-- Critical Blood Stock Alert Modal -->
+<div class="modal fade" id="criticalAlertModal" tabindex="-1" aria-labelledby="criticalAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white" style="background: rgba(17, 24, 39, 0.95); border: none; border-radius: 24px; backdrop-filter: blur(15px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4 pt-0">
+                <!-- Normal red warning icon -->
+                <div class="mx-auto bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mb-4" style="width: 70px; height: 70px; background-color: #e63946 !important;">
+                    <i class="bi bi-exclamation-triangle-fill fs-2"></i>
+                </div>
+                
+                <h3 class="modal-title font-heading text-white mb-3" id="criticalAlertModalLabel" style="font-weight: 800; font-size: 24px; letter-spacing: -0.5px;">CRITICAL BLOOD STOCK ALERT</h3>
+                
+                <div class="p-3 mb-4 rounded-4" style="background: rgba(230, 57, 70, 0.1); border: 1px solid rgba(230, 57, 70, 0.2);">
+                    <p class="mb-0 text-white" id="stock-alert-modal-text" style="font-size: 15px; line-height: 1.6; font-weight: 500;">
+                        Loading critical inventory levels...
+                    </p>
+                </div>
+                
+                <div class="d-flex flex-column gap-2">
+                    <a href="donation-camps.php" class="btn btn-pill btn-crimson py-3 w-100 fw-bold hover-scale"><i class="bi bi-calendar-event me-2"></i>Find an Urgent Donation Camp</a>
+                    <a href="analytics.php" class="btn btn-pill btn-outline-light py-3 w-100 fw-bold hover-scale">View Inventory Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

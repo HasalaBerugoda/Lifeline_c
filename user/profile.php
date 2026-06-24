@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Edit Profile";
 $activePage = "dashboard";
-require_once __DIR__ . '/includes/head.php';
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <script>
@@ -20,7 +20,7 @@ const auth = checkAuth(['donor', 'updater', 'admin']);
             <div class="premium-card">
                 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
                     <h3 class="font-heading text-dark mb-0"><i class="bi bi-person-gear text-danger me-2"></i>Profile Details</h3>
-                    <a href="donor.php" class="btn btn-pill btn-outline-crimson btn-sm">Cancel</a>
+                    <a href="dashboard.php" class="btn btn-pill btn-outline-crimson btn-sm">Cancel</a>
                 </div>
 
                 <div id="profile-alert" class="alert" style="display: none;"></div>
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         'North Western': ['Kurunegala', 'Puttalam'],
         'North Central': ['Anuradhapura', 'Polonnaruwa'],
         'Uva': ['Badulla', 'Monaragala'],
-        'Sabagamuwa': ['Ratnapura', 'Kegalle'] // Corrected typo in Sabagamuwa spelling
+        'Sabagamuwa': ['Ratnapura', 'Kegalle']
     };
 
     const provinceSelect = document.getElementById('prof-province');

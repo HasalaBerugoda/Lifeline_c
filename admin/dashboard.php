@@ -1,61 +1,61 @@
 <?php
-$pageTitle = "Admin Console";
-$activePage = "admin";
-require_once __DIR__ . '/includes/head.php';
+$pageTitle = "Admin Dashboard";
+$activePage = "dashboard";
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <script>
-// Exclusively restricted to admin role
-const auth = checkAuth(['admin']);
+// Restrict to admins and updaters
+const auth = checkAuth(['admin', 'updater']);
 </script>
 
 <div class="hero-header">
-    <?php require_once __DIR__ . '/includes/nav.php'; ?>
-    <h1 class="hero-title">Admin Console</h1>
-    <p class="hero-subtitle">System metrics, user profile configurations, messages inbox, and audit logs.</p>
+    <h1 class="hero-title">Admin Dashboard</h1>
+    <p class="hero-subtitle">Real-time statistics, contact messages, and system audit logs.</p>
 </div>
 
 <div class="container overlap-container">
-    <!-- Admin Aggregated Stats -->
-    <div class="row g-3 mb-4" id="admin-stats-row">
-        <div class="col-md-3 col-6">
-            <div class="premium-card text-center p-3">
-                <div class="stat-number fs-4 text-dark" id="stat-total-users">0</div>
-                <div class="stat-label" style="font-size:10px;">Total Accounts</div>
-            </div>
+    <div class="row g-4">
+        <!-- Left Column: Sidebar Menu -->
+        <div class="col-lg-3 col-md-4">
+            <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
         </div>
-        <div class="col-md-3 col-6">
-            <div class="premium-card text-center p-3">
-                <div class="stat-number fs-4 text-danger" id="stat-total-donors">0</div>
-                <div class="stat-label" style="font-size:10px;">Donors</div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="premium-card text-center p-3">
-                <div class="stat-number fs-4 text-info" id="stat-total-updaters">0</div>
-                <div class="stat-label" style="font-size:10px;">Staff Updaters</div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="premium-card text-center p-3">
-                <div class="stat-number fs-4 text-warning" id="stat-total-messages">0</div>
-                <div class="stat-label" style="font-size:10px;">Contact Messages</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Admin Panel Tabs -->
-    <div class="row">
-        <div class="col-12">
+        <!-- Right Column: Main Dashboard Content -->
+        <div class="col-lg-9 col-md-8">
+            <!-- Admin Aggregated Stats -->
+            <div class="row g-3 mb-4" id="admin-stats-row">
+                <div class="col-sm-3 col-6">
+                    <div class="premium-card text-center p-3">
+                        <div class="stat-number fs-4 text-dark" id="stat-total-users">0</div>
+                        <div class="stat-label" style="font-size:10px;">Total Accounts</div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-6">
+                    <div class="premium-card text-center p-3">
+                        <div class="stat-number fs-4 text-danger" id="stat-total-donors">0</div>
+                        <div class="stat-label" style="font-size:10px;">Donors</div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-6">
+                    <div class="premium-card text-center p-3">
+                        <div class="stat-number fs-4 text-info" id="stat-total-updaters">0</div>
+                        <div class="stat-label" style="font-size:10px;">Staff Updaters</div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-6">
+                    <div class="premium-card text-center p-3">
+                        <div class="stat-number fs-4 text-warning" id="stat-total-messages">0</div>
+                        <div class="stat-label" style="font-size:10px;">Messages</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Panels Card -->
             <div class="premium-card">
                 <ul class="nav nav-tabs custom-tabs mb-4" id="adminTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-panel" type="button" role="tab" aria-controls="users-panel" aria-selected="true">
-                            <i class="bi bi-people-fill me-1"></i> User Management
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="inbox-tab" data-bs-toggle="tab" data-bs-target="#inbox-panel" type="button" role="tab" aria-controls="inbox-panel" aria-selected="false">
+                        <button class="nav-link active" id="inbox-tab" data-bs-toggle="tab" data-bs-target="#inbox-panel" type="button" role="tab" aria-controls="inbox-panel" aria-selected="true">
                             <i class="bi bi-envelope-paper-fill me-1"></i> Inquiries Inbox
                         </button>
                     </li>
@@ -67,34 +67,8 @@ const auth = checkAuth(['admin']);
                 </ul>
 
                 <div class="tab-content" id="adminTabContent">
-                    <!-- Users Panel -->
-                    <div class="tab-pane fade show active" id="users-panel" role="tabpanel" aria-labelledby="users-tab">
-                        <div id="users-alert" class="alert alert-success" style="display: none;"></div>
-                        <div class="table-responsive">
-                            <table class="table table-striped align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>Donor Num / Name</th>
-                                        <th>Contact Email / Phone</th>
-                                        <th>Blood</th>
-                                        <th>Role Authority</th>
-                                        <th>Facility (Updaters Only)</th>
-                                        <th class="text-end">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="users-table-body">
-                                    <tr>
-                                        <td colspan="6" class="text-center py-4 text-secondary">
-                                            <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading user registry...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
                     <!-- Inquiries Inbox -->
-                    <div class="tab-pane fade" id="inbox-panel" role="tabpanel" aria-labelledby="inbox-tab">
+                    <div class="tab-pane fade show active" id="inbox-panel" role="tabpanel" aria-labelledby="inbox-tab">
                         <div id="inbox-alert" class="alert alert-success" style="display: none;"></div>
                         <div class="table-responsive">
                             <table class="table table-striped align-middle">
@@ -227,7 +201,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Load initial dashboard metrics and tables
     await loadAdminDashboard();
-    await loadUsers();
 
     // ----------------------------------------------------
     // Load Admin Dashboard (Stats + Audit + Messages)
@@ -254,149 +227,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.error('Failed to load admin dashboard aggregations', e);
         }
     }
-
-    // ----------------------------------------------------
-    // Load All Users
-    // ----------------------------------------------------
-    async function loadUsers() {
-        const tbody = document.getElementById('users-table-body');
-        try {
-            const result = await apiFetch('api/api.php?endpoint=users');
-            if (result.status === 'success') {
-                tbody.innerHTML = '';
-                const users = result.data;
-
-                // Helper to parse integer
-                function toInt(val) {
-                    return parseInt(val, 10) || 0;
-                }
-
-                users.forEach(u => {
-                    const tr = document.createElement('tr');
-                    
-                    const isSelf = toInt(u.id) === toInt(adminUser.id);
-                    const isUpdater = u.role === 'updater';
-                    
-                    tr.innerHTML = `
-                        <td>
-                            <strong>${u.donor_number || 'Pending'}</strong><br>
-                            <span class="text-dark fw-bold">${u.fullName}</span>
-                            ${isSelf ? '<span class="badge bg-secondary ms-1">You</span>' : ''}
-                        </td>
-                        <td>
-                            <small>${u.email}</small><br>
-                            <small class="text-secondary">${u.phone}</small>
-                        </td>
-                        <td><span class="badge bg-danger rounded-pill">${u.bloodType}</span></td>
-                        <td>
-                            <select onchange="onRoleChange(this, ${u.id})" class="form-select form-select-sm" style="width: 120px;">
-                                <option value="donor" ${u.role === 'donor' ? 'selected' : ''}>Donor</option>
-                                <option value="updater" ${u.role === 'updater' ? 'selected' : ''}>Updater</option>
-                                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
-                                <option value="revoked" ${u.role === 'revoked' ? 'selected' : ''}>Revoked</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" 
-                                   id="facility-${u.id}" 
-                                   value="${u.facility_name || ''}" 
-                                   class="form-control form-control-sm" 
-                                   placeholder="Hospital name" 
-                                   style="width: 180px;"
-                                   ${isUpdater ? '' : 'disabled'}>
-                        </td>
-                        <td class="text-end">
-                            <div class="d-flex gap-1 justify-content-end">
-                                <button onclick="saveUserRole(${u.id}, this)" class="btn btn-sm btn-crimson btn-pill" title="Save role modifications">
-                                    <i class="bi bi-save"></i>
-                                </button>
-                                <button onclick="deleteUser(${u.id})" class="btn btn-sm btn-outline-danger btn-pill" ${isSelf ? 'disabled title="You cannot delete yourself"' : ''}>
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-        } catch (e) {
-            console.error('Failed to load users', e);
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Failed to load user records.</td></tr>`;
-        }
-    }
-
-    // Dropdown change handler to toggle facility input box
-    window.onRoleChange = function(selectEl, userId) {
-        const facilityInput = document.getElementById(`facility-${userId}`);
-        if (selectEl.value === 'updater') {
-            facilityInput.removeAttribute('disabled');
-        } else {
-            facilityInput.value = '';
-            facilityInput.setAttribute('disabled', 'true');
-        }
-    };
-
-    // Save User Role Details API
-    window.saveUserRole = async function(userId, btn) {
-        const selectEl = btn.closest('tr').querySelector('select');
-        const facilityInput = document.getElementById(`facility-${userId}`);
-        const alertBox = document.getElementById('users-alert');
-        alertBox.style.display = 'none';
-
-        const role = selectEl.value;
-        const facility_name = facilityInput.value;
-
-        btn.setAttribute('disabled', 'true');
-
-        try {
-            const result = await apiFetch('api/api.php?endpoint=users', {
-                method: 'PUT',
-                body: JSON.stringify({ id: userId, role, facility_name })
-            });
-
-            if (result.status === 'success') {
-                alertBox.className = "alert alert-success";
-                alertBox.textContent = result.message;
-                alertBox.style.display = 'block';
-                
-                await loadUsers(); // Reload to refresh states
-                await loadAdminDashboard(); // Refresh counts
-            }
-        } catch (error) {
-            alert(error.message || "Failed to update user authority.");
-        } finally {
-            btn.removeAttribute('disabled');
-        }
-    };
-
-    // Delete User account API
-    window.deleteUser = async function(userId) {
-        if (!confirm("Are you sure you want to permanently delete this user account? This will delete all their donation logs and registrations. This cannot be undone.")) {
-            return;
-        }
-
-        const alertBox = document.getElementById('users-alert');
-        alertBox.style.display = 'none';
-
-        try {
-            const result = await apiFetch(`api/api.php?endpoint=users&id=${userId}`, {
-                method: 'DELETE'
-            });
-
-            if (result.status === 'success') {
-                alertBox.className = "alert alert-success";
-                alertBox.textContent = result.message;
-                alertBox.style.display = 'block';
-
-                await loadUsers();
-                await loadAdminDashboard();
-            }
-        } catch (error) {
-            alertBox.className = "alert alert-danger";
-            alertBox.textContent = error.message || "Failed to delete user.";
-            alertBox.style.display = 'block';
-        }
-    };
 
     // ----------------------------------------------------
     // Messages Rendering
@@ -462,7 +292,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (result.status === 'success') {
                 alertBox.textContent = result.message;
                 alertBox.style.display = 'block';
-                await loadAdminDashboard(); // Refresh messages list
+                await loadAdminDashboard();
             }
         } catch (error) {
             alert(error.message || "Failed to toggle status.");
@@ -577,7 +407,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         replyModalInstance.hide();
                     }
                     
-                    await loadAdminDashboard(); // Refresh recent messages
+                    await loadAdminDashboard();
                 }
             } catch (error) {
                 alert(error.message || "Failed to send email reply.");
@@ -588,8 +418,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     }
-
-    // Helper defined at top level of event listener
 });
 </script>
 

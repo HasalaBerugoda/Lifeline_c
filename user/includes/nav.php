@@ -1,44 +1,43 @@
 <?php
-// Single source of truth for Navigation Bar
-// Driven by a PHP array of nav items
+// Subdirectory-aware navigation bar for user-facing modules
 
 $navItems = [
     'home' => [
         'label' => 'Home',
-        'url' => 'home.php',
-        'visibility' => 'public' // Visible to everyone
+        'url' => '../home.php',
+        'visibility' => 'public'
     ],
     'dashboard' => [
         'label' => 'Dashboard',
-        'url' => 'user/dashboard.php',
-        'visibility' => 'auth', // Logged in only
+        'url' => 'dashboard.php',
+        'visibility' => 'auth',
         'roles' => ['donor', 'updater', 'admin']
     ],
     'camps' => [
         'label' => 'Blood Camps',
-        'url' => 'donation-camps.php',
+        'url' => '../donation-camps.php',
         'visibility' => 'public'
     ],
     'command' => [
         'label' => 'Command',
-        'url' => 'admin/settings.php',
-        'visibility' => 'auth', // Logged in only
+        'url' => '../admin/settings.php',
+        'visibility' => 'auth',
         'roles' => ['updater', 'admin']
     ],
     'analytics' => [
         'label' => 'Analytics',
-        'url' => 'analytics.php',
+        'url' => '../analytics.php',
         'visibility' => 'public'
     ],
     'admin' => [
         'label' => 'Admin',
-        'url' => 'admin/dashboard.php',
-        'visibility' => 'auth', // Logged in only
+        'url' => '../admin/dashboard.php',
+        'visibility' => 'auth',
         'roles' => ['admin']
     ],
     'contact' => [
         'label' => 'Contact',
-        'url' => 'contact-us.php',
+        'url' => '../contact-us.php',
         'visibility' => 'public'
     ]
 ];
@@ -50,7 +49,7 @@ $activeKey = $activePage ?? '';
     <nav class="navbar navbar-expand-lg glass-nav">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="navbar-brand" href="home.php">
+            <a class="navbar-brand" href="../home.php">
                 <i class="bi bi-droplet-fill text-danger"></i>
                 Life<span>Line</span>
             </a>
@@ -66,7 +65,6 @@ $activeKey = $activePage ?? '';
                     <?php foreach ($navItems as $key => $item): 
                         $activeClass = ($activeKey === $key) ? 'active' : '';
                         
-                        // Set attributes for client-side visibility control
                         $dataAttrs = "data-visibility='{$item['visibility']}'";
                         if (isset($item['roles'])) {
                             $dataAttrs .= " data-roles='" . json_encode($item['roles']) . "'";
@@ -83,7 +81,7 @@ $activeKey = $activePage ?? '';
                 <!-- Auth Section (Controlled client side) -->
                 <div class="d-flex align-items-center gap-3" id="nav-auth-section">
                     <!-- Guest Options -->
-                    <a href="user/login.php" class="btn btn-pill btn-outline-crimson text-white border-white-50 btn-sm" id="nav-btn-signin" style="display: none;">
+                    <a href="login.php" class="btn btn-pill btn-outline-crimson text-white border-white-50 btn-sm" id="nav-btn-signin" style="display: none;">
                         Sign In
                     </a>
                     
@@ -116,9 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 isLoggedIn = true;
                 const user = JSON.parse(userJson);
                 userRole = user.role;
-                userName = user.fullName.split(' ')[0]; // first name
+                userName = user.fullName.split(' ')[0];
             } else {
-                // Token expired
                 localStorage.removeItem('ll_token');
                 localStorage.removeItem('ll_user');
             }

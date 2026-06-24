@@ -1,48 +1,36 @@
 <?php
-// Helper file for sending HTML emails using PHPMailer and Gmail SMTP
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
 
 require_once __DIR__ . '/PHPMailer/Exception.php';
 require_once __DIR__ . '/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/PHPMailer/SMTP.php';
 
 /**
- * Send an HTML email via Gmail SMTP
- * 
- * @param string $to Recipient email address
- * @param string $subject Email subject
- * @param string $htmlBody HTML content of the email
- * @return array Status and error details
+ * Sends an email using PHPMailer and Gmail SMTP.
+ *
+ * @param string $to Recipient email.
+ * @param string $subject Email subject.
+ * @param string $htmlBody HTML content.
+ * @param string|null &$errorMsg Set to error details if sending fails.
+ * @return bool True if sent, false otherwise.
  */
-function sendEmailPHPMailer($to, $subject, $htmlBody) {
+function sendEmail($to, $subject, $htmlBody, &$errorMsg = null) {
     $mail = new PHPMailer(true);
-
     try {
-        // Server settings
+        // SMTP Server configuration
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'hasalagayasritha.2003@gmail.com';
-        $mail->Password   = 'cltv wzdq zujo uicr';
-        $mail->SMTPSecure = 'tls';
+        $mail->Password   = 'cltv wzdq zujo uicr'; // Gmail App Password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
-        // Bypass local SSL peer verification issues in development (missing CA bundles in XAMPP)
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
-
-        // Force UTF-8 encoding
+        // Characters & encoding
         $mail->CharSet = 'UTF-8';
 
-        // Recipients
+        // Sender & Recipient
         $mail->setFrom('hasalagayasritha.2003@gmail.com', 'LifeLine Blood Bank');
         $mail->addAddress($to);
 
@@ -50,13 +38,12 @@ function sendEmailPHPMailer($to, $subject, $htmlBody) {
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body    = $htmlBody;
+        $mail->AltBody = strip_tags($htmlBody);
 
         $mail->send();
-        return ['status' => true];
+        return true;
     } catch (Exception $e) {
-        return [
-            'status' => false,
-            'error' => $mail->ErrorInfo
-        ];
+        $errorMsg = $mail->ErrorInfo;
+        return false;
     }
 }

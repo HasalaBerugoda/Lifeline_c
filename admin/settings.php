@@ -1,7 +1,7 @@
 <?php
-$pageTitle = "Command Center";
-$activePage = "command";
-require_once __DIR__ . '/includes/head.php';
+$pageTitle = "Command / Settings";
+$activePage = "settings";
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <script>
@@ -10,315 +10,324 @@ const auth = checkAuth(['updater', 'admin']);
 </script>
 
 <div class="hero-header">
-    <?php require_once __DIR__ . '/includes/nav.php'; ?>
     <h1 class="hero-title">Command Center</h1>
     <p class="hero-subtitle">Log new medical donations, manage physical inventory reserves, and coordinate upcoming camps.</p>
 </div>
 
 <div class="container overlap-container">
     <div class="row g-4">
-        <!-- Column 1: Inventory & Visualizations -->
-        <div class="col-lg-7">
-            <!-- Physical Stock Adjustments -->
-            <div class="premium-card mb-4">
-                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-boxes text-danger me-2"></i>Physical Reserve Management</h3>
-                <div id="inv-alert" class="alert alert-success" style="display: none;"></div>
-                
-                <form id="inventory-form">
-                    <div class="row g-3 mb-4">
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-oPos" class="form-label font-heading mb-1">O+ Stock</label>
-                            <input type="number" class="form-control" id="inv-oPos" min="0" required>
-                        </div>
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-aPos" class="form-label font-heading mb-1">A+ Stock</label>
-                            <input type="number" class="form-control" id="inv-aPos" min="0" required>
-                        </div>
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-bPos" class="form-label font-heading mb-1">B+ Stock</label>
-                            <input type="number" class="form-control" id="inv-bPos" min="0" required>
-                        </div>
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-abPos" class="form-label font-heading mb-1">AB+ Stock</label>
-                            <input type="number" class="form-control" id="inv-abPos" min="0" required>
-                        </div>
-                        
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-oNeg" class="form-label font-heading mb-1">O- Stock</label>
-                            <input type="number" class="form-control" id="inv-oNeg" min="0" required>
-                        </div>
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-aNeg" class="form-label font-heading mb-1">A- Stock</label>
-                            <input type="number" class="form-control" id="inv-aNeg" min="0" required>
-                        </div>
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-bNeg" class="form-label font-heading mb-1">B- Stock</label>
-                            <input type="number" class="form-control" id="inv-bNeg" min="0" required>
-                        </div>
-                        <div class="col-sm-3 col-6">
-                            <label for="inv-abNeg" class="form-label font-heading mb-1">AB- Stock</label>
-                            <input type="number" class="form-control" id="inv-abNeg" min="0" required>
-                        </div>
-                        
-                        <div class="col-sm-6 col-12 mx-auto">
-                            <label for="inv-platelets" class="form-label font-heading mb-1">Platelets Stock</label>
-                            <input type="number" class="form-control text-center fw-bold text-danger border-danger" id="inv-platelets" min="0" required>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-pill btn-crimson w-100 py-2" id="inventory-submit-btn">
-                        <span class="spinner-border spinner-border-sm me-1" id="inv-spinner" style="display: none;"></span>
-                        Update Physical Inventory Counts
-                    </button>
-                </form>
-            </div>
+        <!-- Left Column: Sidebar Menu -->
+        <div class="col-lg-3 col-md-4">
+            <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
+        </div>
 
-            <!-- Charts for verification -->
+        <!-- Right Column: Command Center Dashboard -->
+        <div class="col-lg-9 col-md-8">
             <div class="row g-4">
-                <div class="col-md-7">
+                <!-- Column 1: Inventory & Visualizations -->
+                <div class="col-lg-7">
+                    <!-- Physical Stock Adjustments -->
+                    <div class="premium-card mb-4">
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-boxes text-danger me-2"></i>Physical Reserve Management</h3>
+                        <div id="inv-alert" class="alert alert-success" style="display: none;"></div>
+                        
+                        <form id="inventory-form">
+                            <div class="row g-3 mb-4">
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-oPos" class="form-label font-heading mb-1">O+ Stock</label>
+                                    <input type="number" class="form-control" id="inv-oPos" min="0" required>
+                                </div>
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-aPos" class="form-label font-heading mb-1">A+ Stock</label>
+                                    <input type="number" class="form-control" id="inv-aPos" min="0" required>
+                                </div>
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-bPos" class="form-label font-heading mb-1">B+ Stock</label>
+                                    <input type="number" class="form-control" id="inv-bPos" min="0" required>
+                                </div>
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-abPos" class="form-label font-heading mb-1">AB+ Stock</label>
+                                    <input type="number" class="form-control" id="inv-abPos" min="0" required>
+                                </div>
+                                
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-oNeg" class="form-label font-heading mb-1">O- Stock</label>
+                                    <input type="number" class="form-control" id="inv-oNeg" min="0" required>
+                                </div>
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-aNeg" class="form-label font-heading mb-1">A- Stock</label>
+                                    <input type="number" class="form-control" id="inv-aNeg" min="0" required>
+                                </div>
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-bNeg" class="form-label font-heading mb-1">B- Stock</label>
+                                    <input type="number" class="form-control" id="inv-bNeg" min="0" required>
+                                </div>
+                                <div class="col-sm-3 col-6">
+                                    <label for="inv-abNeg" class="form-label font-heading mb-1">AB- Stock</label>
+                                    <input type="number" class="form-control" id="inv-abNeg" min="0" required>
+                                </div>
+                                
+                                <div class="col-sm-6 col-12 mx-auto">
+                                    <label for="inv-platelets" class="form-label font-heading mb-1">Platelets Stock</label>
+                                    <input type="number" class="form-control text-center fw-bold text-danger border-danger" id="inv-platelets" min="0" required>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-pill btn-crimson w-100 py-2" id="inventory-submit-btn">
+                                <span class="spinner-border spinner-border-sm me-1" id="inv-spinner" style="display: none;"></span>
+                                Update Physical Inventory Counts
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Charts for verification -->
+                    <div class="row g-4">
+                        <div class="col-md-7">
+                            <div class="premium-card">
+                                <h4 class="font-heading text-dark mb-3" style="font-size:14px;">Stock Adequacy Chart</h4>
+                                <div style="position: relative; height: 200px;">
+                                    <canvas id="adequacyChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="premium-card">
+                                <h4 class="font-heading text-dark mb-3" style="font-size:14px;">Rh Factor Share</h4>
+                                <div style="position: relative; height: 200px;">
+                                    <canvas id="rhChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Log Donation Form -->
+                <div class="col-lg-5">
                     <div class="premium-card">
-                        <h4 class="font-heading text-dark mb-3" style="font-size:16px;">Stock Adequacy Chart</h4>
-                        <div style="position: relative; height: 230px;">
-                            <canvas id="adequacyChart"></canvas>
-                        </div>
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-journal-plus text-danger me-2"></i>Log New Donation</h3>
+                        <div id="donation-alert" class="alert" style="display: none;"></div>
+
+                        <form id="donation-form">
+                            <div class="mb-3">
+                                <label for="don-id" class="form-label">Donor ID or Donor Number</label>
+                                <input type="text" class="form-control" id="don-id" placeholder="e.g. LL-0001 or 3" required>
+                                <div class="form-text">Input the unique numerical ID or LL-XXXX donor code.</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="don-blood" class="form-label">Blood Type</label>
+                                    <select class="form-select" id="don-blood" required>
+                                        <option value="" disabled selected>Select Group</option>
+                                        <option value="O+">O+</option>
+                                        <option value="A+">A+</option>
+                                        <option value="B+">B+</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="O-">O-</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB-">AB-</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="don-volume" class="form-label">Volume (ml)</label>
+                                    <select class="form-select" id="don-volume" required>
+                                        <option value="350" selected>350 ml (Single Pack)</option>
+                                        <option value="450">450 ml (Double Pack)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="don-hemo" class="form-label">Hemoglobin (g/dL)</label>
+                                    <input type="number" step="0.1" class="form-control" id="don-hemo" placeholder="e.g. 13.5">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="don-bp" class="form-label">Blood Pressure</label>
+                                    <input type="text" class="form-control" id="don-bp" placeholder="e.g. 120/80">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="don-weight" class="form-label">Weight (kg)</label>
+                                    <input type="number" step="0.1" class="form-control" id="don-weight" placeholder="e.g. 68.5">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="don-date" class="form-label">Donation Date</label>
+                                    <input type="date" class="form-control" id="don-date" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="don-location" class="form-label">Facility Location</label>
+                                <input type="text" class="form-control" id="don-location" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-pill btn-crimson w-100 py-3" id="donation-submit-btn">
+                                <span class="spinner-border spinner-border-sm me-1" id="don-spinner" style="display: none;"></span>
+                                Record Donation & Sync CSV
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-5">
+            </div>
+
+            <!-- Row: Camp Management -->
+            <div class="row g-4 mt-3">
+                <!-- Create Camp -->
+                <div class="col-lg-5">
                     <div class="premium-card">
-                        <h4 class="font-heading text-dark mb-3" style="font-size:16px;">Rh Factor Share</h4>
-                        <div style="position: relative; height: 230px;">
-                            <canvas id="rhChart"></canvas>
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-calendar-plus text-danger me-2"></i>Create Donation Camp</h3>
+                        <div id="camp-alert" class="alert" style="display: none;"></div>
+
+                        <form id="camp-form">
+                            <div class="mb-3">
+                                <label for="camp-name" class="form-label">Camp Campaign Name</label>
+                                <input type="text" class="form-control" id="camp-name" placeholder="e.g. Kandy Town Hall Drive" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="camp-date" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="camp-date" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="camp-time" class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" id="camp-time" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="camp-loc" class="form-label">Location Address</label>
+                                    <input type="text" class="form-control" id="camp-loc" placeholder="City or Hall Name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="camp-org" class="form-label">Organizer Entity</label>
+                                    <input type="text" class="form-control" id="camp-org" placeholder="e.g. Red Cross" required>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="camp-desc" class="form-label">Camp Details / Description</label>
+                                <textarea class="form-control" id="camp-desc" rows="3" placeholder="Additional requirements or details..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-pill btn-crimson w-100 py-3" id="camp-submit-btn">
+                                <span class="spinner-border spinner-border-sm me-1" id="camp-spinner" style="display: none;"></span>
+                                Publish Camp & Notify Donors
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Camps List with Delete -->
+                <div class="col-lg-7">
+                    <div class="premium-card">
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-table text-danger me-2"></i>Active Campaigns</h3>
+                        <div id="camp-list-alert" class="alert alert-success" style="display: none;"></div>
+                        
+                        <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                            <table class="table table-striped align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Campaign / Date</th>
+                                        <th>Location</th>
+                                        <th>Organizer</th>
+                                        <th>Registered</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="camps-list-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-secondary">
+                                            <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading active campaigns...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Column 2: Log Donation Form -->
-        <div class="col-lg-5">
-            <div class="premium-card">
-                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-journal-plus text-danger me-2"></i>Log New Donation</h3>
-                <div id="donation-alert" class="alert" style="display: none;"></div>
+            <!-- Row: Urgent Requests Management -->
+            <div class="row g-4 mt-3">
+                <!-- Add/Edit Urgent Request Form -->
+                <div class="col-lg-5">
+                    <div class="premium-card">
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2" id="urgent-form-title"><i class="bi bi-exclamation-octagon text-danger me-2"></i>Add Urgent Request</h3>
+                        <div id="urgent-alert" class="alert" style="display: none;"></div>
 
-                <form id="donation-form">
-                    <div class="mb-3">
-                        <label for="don-id" class="form-label">Donor ID or Donor Number</label>
-                        <input type="text" class="form-control" id="don-id" placeholder="e.g. LL-0001 or 3" required>
-                        <div class="form-text">Input the unique numerical ID or LL-XXXX donor code.</div>
+                        <form id="urgent-form">
+                            <input type="hidden" id="urgent-id">
+                            
+                            <div class="mb-3">
+                                <label for="urgent-blood" class="form-label font-heading mb-1">Blood Group</label>
+                                <select class="form-select" id="urgent-blood" required>
+                                    <option value="" disabled selected>Select Group</option>
+                                    <option value="O+">O+</option>
+                                    <option value="A+">A+</option>
+                                    <option value="B+">B+</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="urgent-hospital" class="form-label font-heading mb-1">Hospital / Location</label>
+                                <input type="text" class="form-control" id="urgent-hospital" placeholder="e.g. Badulla General Hospital" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="urgent-status" class="form-label font-heading mb-1">Urgency Level</label>
+                                <select class="form-select" id="urgent-status" required>
+                                    <option value="Critical Level" selected>Critical Level</option>
+                                    <option value="High Priority">High Priority</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-pill btn-crimson flex-grow-1 py-3" id="urgent-submit-btn">
+                                    <span class="spinner-border spinner-border-sm me-1" id="urgent-spinner" style="display: none;"></span>
+                                    <span id="urgent-submit-text">Add Urgent Request</span>
+                                </button>
+                                <button type="button" class="btn btn-pill btn-outline-secondary px-3 py-3" id="urgent-cancel-btn" style="display: none;">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="don-blood" class="form-label">Blood Type</label>
-                            <select class="form-select" id="don-blood" required>
-                                <option value="" disabled selected>Select Group</option>
-                                <option value="O+">O+</option>
-                                <option value="A+">A+</option>
-                                <option value="B+">B+</option>
-                                <option value="AB+">AB+</option>
-                                <option value="O-">O-</option>
-                                <option value="A-">A-</option>
-                                <option value="B-">B-</option>
-                                <option value="AB-">AB-</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="don-volume" class="form-label">Volume (ml)</label>
-                            <select class="form-select" id="don-volume" required>
-                                <option value="350" selected>350 ml (Single Pack)</option>
-                                <option value="450">450 ml (Double Pack)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="don-hemo" class="form-label">Hemoglobin (g/dL)</label>
-                            <input type="number" step="0.1" class="form-control" id="don-hemo" placeholder="e.g. 13.5">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="don-bp" class="form-label">Blood Pressure</label>
-                            <input type="text" class="form-control" id="don-bp" placeholder="e.g. 120/80">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="don-weight" class="form-label">Weight (kg)</label>
-                            <input type="number" step="0.1" class="form-control" id="don-weight" placeholder="e.g. 68.5">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="don-date" class="form-label">Donation Date</label>
-                            <input type="date" class="form-control" id="don-date" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="don-location" class="form-label">Facility Location</label>
-                        <input type="text" class="form-control" id="don-location" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-pill btn-crimson w-100 py-3" id="donation-submit-btn">
-                        <span class="spinner-border spinner-border-sm me-1" id="don-spinner" style="display: none;"></span>
-                        Record Donation & Sync CSV
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Row: Camp Management -->
-    <div class="row g-4 mt-3">
-        <!-- Create Camp -->
-        <div class="col-lg-5">
-            <div class="premium-card">
-                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-calendar-plus text-danger me-2"></i>Create Donation Camp</h3>
-                <div id="camp-alert" class="alert" style="display: none;"></div>
-
-                <form id="camp-form">
-                    <div class="mb-3">
-                        <label for="camp-name" class="form-label">Camp Campaign Name</label>
-                        <input type="text" class="form-control" id="camp-name" placeholder="e.g. Kandy Town Hall Drive" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="camp-date" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="camp-date" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="camp-time" class="form-label">Start Time</label>
-                            <input type="time" class="form-control" id="camp-time" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="camp-loc" class="form-label">Location Address</label>
-                            <input type="text" class="form-control" id="camp-loc" placeholder="City or Hall Name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="camp-org" class="form-label">Organizer Entity</label>
-                            <input type="text" class="form-control" id="camp-org" placeholder="e.g. Red Cross" required>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="camp-desc" class="form-label">Camp Details / Description</label>
-                        <textarea class="form-control" id="camp-desc" rows="3" placeholder="Additional requirements or details..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-pill btn-crimson w-100 py-3" id="camp-submit-btn">
-                        <span class="spinner-border spinner-border-sm me-1" id="camp-spinner" style="display: none;"></span>
-                        Publish Camp & Notify Donors
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Camps List with Delete -->
-        <div class="col-lg-7">
-            <div class="premium-card">
-                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-table text-danger me-2"></i>Active Campaigns</h3>
-                <div id="camp-list-alert" class="alert alert-success" style="display: none;"></div>
-                
-                <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
-                    <table class="table table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>Campaign / Date</th>
-                                <th>Location</th>
-                                <th>Organizer</th>
-                                <th>Registered</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="camps-list-body">
-                            <tr>
-                                <td colspan="5" class="text-center py-4 text-secondary">
-                                    <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading active campaigns...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Row: Urgent Requests Management -->
-    <div class="row g-4 mt-3">
-        <!-- Add/Edit Urgent Request Form -->
-        <div class="col-lg-5">
-            <div class="premium-card">
-                <h3 class="font-heading text-dark mb-3 border-bottom pb-2" id="urgent-form-title"><i class="bi bi-exclamation-octagon text-danger me-2"></i>Add Urgent Request</h3>
-                <div id="urgent-alert" class="alert" style="display: none;"></div>
-
-                <form id="urgent-form">
-                    <input type="hidden" id="urgent-id">
-                    
-                    <div class="mb-3">
-                        <label for="urgent-blood" class="form-label font-heading mb-1">Blood Group</label>
-                        <select class="form-select" id="urgent-blood" required>
-                            <option value="" disabled selected>Select Group</option>
-                            <option value="O+">O+</option>
-                            <option value="A+">A+</option>
-                            <option value="B+">B+</option>
-                            <option value="AB+">AB+</option>
-                            <option value="O-">O-</option>
-                            <option value="A-">A-</option>
-                            <option value="B-">B-</option>
-                            <option value="AB-">AB-</option>
-                        </select>
+                <!-- Urgent Requests List with Actions -->
+                <div class="col-lg-7">
+                    <div class="premium-card">
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-card-list text-danger me-2"></i>Active Urgent Requests</h3>
+                        <div id="urgent-list-alert" class="alert alert-success" style="display: none;"></div>
+                        
+                        <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                            <table class="table table-striped align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Blood Type</th>
+                                        <th>Hospital</th>
+                                        <th>Urgency Level</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="urgent-list-body">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-secondary">
+                                            <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading urgent requests...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="urgent-hospital" class="form-label font-heading mb-1">Hospital / Location</label>
-                        <input type="text" class="form-control" id="urgent-hospital" placeholder="e.g. Badulla General Hospital" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="urgent-status" class="form-label font-heading mb-1">Urgency Level</label>
-                        <select class="form-select" id="urgent-status" required>
-                            <option value="Critical Level" selected>Critical Level</option>
-                            <option value="High Priority">High Priority</option>
-                        </select>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-pill btn-crimson flex-grow-1 py-3" id="urgent-submit-btn">
-                            <span class="spinner-border spinner-border-sm me-1" id="urgent-spinner" style="display: none;"></span>
-                            <span id="urgent-submit-text">Add Urgent Request</span>
-                        </button>
-                        <button type="button" class="btn btn-pill btn-outline-secondary px-3 py-3" id="urgent-cancel-btn" style="display: none;">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Urgent Requests List with Actions -->
-        <div class="col-lg-7">
-            <div class="premium-card">
-                <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-card-list text-danger me-2"></i>Active Urgent Requests</h3>
-                <div id="urgent-list-alert" class="alert alert-success" style="display: none;"></div>
-                
-                <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
-                    <table class="table table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>Blood Type</th>
-                                <th>Hospital</th>
-                                <th>Urgency Level</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="urgent-list-body">
-                            <tr>
-                                <td colspan="4" class="text-center py-4 text-secondary">
-                                    <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading urgent requests...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -358,17 +367,15 @@ const auth = checkAuth(['updater', 'admin']);
 
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
-    // Fill facility location default with updater's hospital if available
     const userObj = auth.user;
     if (userObj.facility_name) {
         document.getElementById('don-location').value = userObj.facility_name;
     }
     
-    // Set default donation date as today
+    // Set default dates
     document.getElementById('don-date').value = new Date().toISOString().substring(0, 10);
     document.getElementById('camp-date').value = new Date().toISOString().substring(0, 10);
 
-    // Global dashboard metrics and inventory storage
     let currentInventory = {};
     let forecastDemand = {};
     
@@ -391,7 +398,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (result.status === 'success') {
                 currentInventory = result.data;
                 
-                // Pre-fill form fields
                 document.getElementById('inv-oPos').value = currentInventory.oPos;
                 document.getElementById('inv-aPos').value = currentInventory.aPos;
                 document.getElementById('inv-bPos').value = currentInventory.bPos;
@@ -415,7 +421,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             const result = await apiFetch('api/analytics.php');
             if (result.status === 'success') {
                 const forecastData = result.data.forecast;
-                // Map the forecast month1 (next month) to match the keys of currentInventory
                 forecastDemand = {
                     'oPos': forecastData['O+']?.month1 || 0,
                     'aPos': forecastData['A+']?.month1 || 0,
@@ -440,7 +445,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     const invSpinner = document.getElementById('inv-spinner');
     const invBtn = document.getElementById('inventory-submit-btn');
 
-    // Helper to safely parse integer
     function toInt(val) {
         return parseInt(val, 10) || 0;
     }
@@ -473,7 +477,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 invAlert.textContent = "Physical inventory updated and verified.";
                 invAlert.style.display = 'block';
                 
-                // Reload metrics locally and refresh charts
                 currentInventory = { ...currentInventory, ...payload };
                 renderCharts();
             }
@@ -489,11 +492,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Chart.js Rendering Logic
     // ----------------------------------------------------
     function renderCharts() {
-        // A. Adequacy Bar Chart
         const barCtx = document.getElementById('adequacyChart').getContext('2d');
         const labels = ['O+', 'A+', 'B+', 'AB+', 'O-', 'A-', 'B-', 'AB-'];
         
-        // Match inventory fields
         const values = [
             currentInventory.oPos || 0,
             currentInventory.aPos || 0,
@@ -516,7 +517,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             forecastDemand.abNeg || 0
         ];
 
-        // Color bars: green if stock >= demand, red if stock < demand
         const backgroundColors = values.map((val, idx) => {
             return val >= demands[idx] ? '#059669' : '#dc2626';
         });
@@ -546,11 +546,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
-        // B. Rh factor Share Donut
         const donutCtx = document.getElementById('rhChart').getContext('2d');
         
         const posSum = (currentInventory.oPos || 0) + (currentInventory.aPos || 0) + (currentInventory.bPos || 0) + (currentInventory.abPos || 0);
-        const negSum = (currentInventory.oNeg || 0) + (currentInventory.aNeg || 0) + (currentInventory.bNeg || 0) + (currentInventory.abNeg || 0);
+        const textSum = (currentInventory.oNeg || 0) + (currentInventory.aNeg || 0) + (currentInventory.bNeg || 0) + (currentInventory.abNeg || 0);
 
         if (rhChartInstance) rhChartInstance.destroy();
         
@@ -559,7 +558,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             data: {
                 labels: ['Rh Positive (+)', 'Rh Negative (-)'],
                 datasets: [{
-                    data: [posSum, negSum],
+                    data: [posSum, textSum],
                     backgroundColor: ['#e63946', '#111827'],
                     borderWidth: 1
                 }]
@@ -611,13 +610,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 donAlert.style.display = 'block';
                 
                 donForm.reset();
-                // Retain date and location defaults
                 document.getElementById('don-date').value = new Date().toISOString().substring(0, 10);
                 if (userObj.facility_name) {
                     document.getElementById('don-location').value = userObj.facility_name;
                 }
 
-                // Reload inventory counts locally & update charts
                 await loadInventory();
                 renderCharts();
             }
@@ -666,7 +663,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 campForm.reset();
                 document.getElementById('camp-date').value = new Date().toISOString().substring(0, 10);
                 
-                await loadCamps(); // Reload camp list
+                await loadCamps();
             }
         } catch (error) {
             campAlert.className = "alert alert-danger";
@@ -678,7 +675,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    // Escape HTML helper
     function escapeHtml(text) {
         if (text === null || text === undefined) return '';
         const map = {
@@ -691,11 +687,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
     }
 
-    // Load active camps in list
     async function loadCamps() {
         const tbody = document.getElementById('camps-list-body');
-        const alertList = document.getElementById('camp-list-alert');
-
         try {
             const result = await apiFetch('api/camps.php?action=all');
             if (result.status === 'success') {
@@ -706,7 +699,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     camps.forEach(camp => {
                         const tr = document.createElement('tr');
                         const isDeletable = userObj.role === 'updater' || userObj.role === 'admin';
-                        const btnState = isDeletable ? '' : 'disabled title="Only Authorized Staff/Admins can delete campaigns"';
+                        const btnState = isDeletable ? '' : 'disabled';
 
                         tr.innerHTML = `
                             <td>
@@ -716,7 +709,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <td>${escapeHtml(camp.location)}</td>
                             <td>${escapeHtml(camp.organizer)}</td>
                             <td>
-                                <span class="badge bg-danger rounded-pill px-3 py-2 cursor-pointer hover-effect-scale" onclick="openParticipantsModal(${camp.id}, '${escapeHtml(camp.name)}')">
+                                <span class="badge bg-danger rounded-pill px-3 py-2 cursor-pointer" onclick="openParticipantsModal(${camp.id}, '${escapeHtml(camp.name)}')">
                                     <i class="bi bi-people-fill me-1"></i> ${camp.registered_count || 0}
                                 </span>
                             </td>
@@ -729,24 +722,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                         tbody.appendChild(tr);
                     });
                 } else {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center py-3 text-secondary">No campaigns scheduled.</td>
-                        </tr>
-                    `;
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-secondary">No campaigns scheduled.</td></tr>`;
                 }
             }
         } catch (e) {
             console.error('Failed to load campaigns list', e);
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center text-danger py-3">Failed to load campaigns.</td>
-                </tr>
-            `;
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-3">Failed to load campaigns.</td></tr>`;
         }
     }
 
-    // Participants modal helper
     window.openParticipantsModal = async function(campId, campName) {
         const titleEl = document.getElementById('participantsModalLabel');
         titleEl.innerHTML = `<i class="bi bi-people-fill text-danger me-2"></i>Roster: ${escapeHtml(campName)}`;
@@ -793,24 +777,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                         tbody.appendChild(tr);
                     });
                 } else {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="text-center py-4 text-secondary">No participants registered for this camp yet.</td>
-                        </tr>
-                    `;
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-secondary">No participants registered for this camp yet.</td></tr>`;
                 }
             }
         } catch (e) {
             console.error(e);
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center text-danger py-4">Failed to load participant list.</td>
-                </tr>
-            `;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger py-4">Failed to load participant list.</td></tr>`;
         }
     };
 
-    // Toggle participant attendance
     window.toggleAttendance = async function(checkbox, registrationId) {
         checkbox.disabled = true;
         const attended = checkbox.checked;
@@ -824,13 +799,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         } catch (e) {
             alert(e.message || "Failed to update attendance.");
-            checkbox.checked = !attended; // Revert
+            checkbox.checked = !attended;
         } finally {
             checkbox.disabled = false;
         }
     };
 
-    // Delete Camp
     window.deleteCamp = async function(campId) {
         if (!confirm("Are you sure you want to permanently delete this camp campaign? All donor registrations for this camp will be deleted.")) {
             return;
@@ -847,7 +821,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (result.status === 'success') {
                 alertList.textContent = "Campaign successfully deleted.";
                 alertList.style.display = 'block';
-                await loadCamps(); // Reload
+                await loadCamps();
             }
         } catch (error) {
             alert(error.message || "Deletion failed.");
@@ -882,7 +856,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                         const status = req.status_level;
                         const isCritical = status.toLowerCase().includes('critical');
                         
-                        // Define background color based on severity
                         const circleColor = isCritical ? '#e63946' : '#ffb703';
                         const textColor = isCritical ? '#ffffff' : '#111827';
                         const badgeClass = isCritical ? 'bg-danger' : 'bg-warning text-dark';
@@ -908,24 +881,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                         tbody.appendChild(tr);
                     });
                 } else {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="text-center py-3 text-secondary">No urgent requests active.</td>
-                        </tr>
-                    `;
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-3 text-secondary">No urgent requests active.</td></tr>`;
                 }
             }
         } catch (e) {
             console.error('Failed to load urgent requests', e);
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center text-danger py-3">Failed to load urgent requests.</td>
-                </tr>
-            `;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger py-3">Failed to load urgent requests.</td></tr>`;
         }
     }
 
-    // Submit handler (handles both Add and Edit)
     urgentForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         urgentAlert.style.display = 'none';
@@ -966,7 +930,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    // Enter Edit Mode
     window.editUrgentRequest = function(id, blood_type, hospital_name, status_level) {
         urgentAlert.style.display = 'none';
         
@@ -979,11 +942,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         urgentSubmitText.textContent = "Save Changes";
         urgentCancelBtn.style.display = 'inline-block';
         
-        // Scroll to form smoothly
         urgentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 
-    // Cancel Edit Mode
     urgentCancelBtn.addEventListener('click', resetUrgentForm);
 
     function resetUrgentForm() {
@@ -995,7 +956,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         urgentAlert.style.display = 'none';
     }
 
-    // Delete Request
     window.deleteUrgentRequest = async function(id) {
         if (!confirm("Are you sure you want to delete this urgent blood shortage request?")) {
             return;
@@ -1012,7 +972,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 urgentListAlert.textContent = "Urgent request successfully removed.";
                 urgentListAlert.style.display = 'block';
                 
-                // If we were editing this particular item, reset the form
                 const currentEditId = document.getElementById('urgent-id').value;
                 if (currentEditId && parseInt(currentEditId) === id) {
                     resetUrgentForm();
@@ -1028,4 +987,3 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-
