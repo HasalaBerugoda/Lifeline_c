@@ -43,7 +43,7 @@ require_once __DIR__ . '/includes/head.php';
     <!-- Critical Alerts Panel -->
     <div class="row mb-4" id="alerts-row" style="display: none;">
         <div class="col-12">
-            <div class="premium-card border-start border-danger border-4">
+            <div class="premium-card">
                 <h3 class="font-heading text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Critical Stock Deficits</h3>
                 <div class="row g-3" id="alerts-list-container">
                     <!-- Dynamic Alerts -->

@@ -288,14 +288,13 @@ require_once __DIR__ . '/includes/head.php';
 <div class="container overlap-container">
     <!-- Filter Bar -->
     <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="col-12 d-flex flex-column align-items-center gap-2">
             <div class="camps-filter-bar" id="camps-filter-group">
-                <span class="camps-filter-label">Filter:</span>
                 <button type="button" class="btn btn-pill-filter active" data-filter="all">All Camps</button>
                 <button type="button" class="btn btn-pill-filter" data-filter="month">This Month</button>
                 <button type="button" class="btn btn-pill-filter d-none" data-filter="mine" id="filter-mine-btn">My Registrations</button>
             </div>
-            <div class="text-secondary fw-semibold" id="camps-count-label">Loading camps...</div>
+            <div class="text-secondary fw-semibold text-center" id="camps-count-label">Loading camps...</div>
         </div>
     </div>
 
