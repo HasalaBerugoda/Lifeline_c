@@ -48,6 +48,13 @@ require_once __DIR__ . '/includes/head.php';
         </div>
     </div>
 
+    <!-- Section Title: Donor Hub -->
+    <div class="text-center my-5 py-2">
+        <h2 class="font-heading text-dark display-6 mb-2" style="font-weight: 800;">Donor Hub</h2>
+        <div class="mx-auto mb-3" style="width: 50px; height: 3px; background-color: var(--color-crimson); border-radius: 10px;"></div>
+        <p class="text-secondary small mx-auto" style="max-width: 600px;">Explore the donation process, monitor active hospital shortages, and register for scheduled local blood drives.</p>
+    </div>
+
     <!-- Marketing Sections: How It Works, Urgent Requests & Camps Preview -->
     <div class="row g-4 mb-5 align-items-stretch">
         <!-- Interactive Information (1/3) -->
@@ -294,6 +301,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     backdrop-filter: blur(5px);
     background-color: rgba(0, 0, 0, 0.7) !important;
 }
+
+/* Lenis Smooth Scroll CSS */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
 </style>
 
 <!-- Critical Blood Stock Alert Modal -->
@@ -325,5 +346,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         </div>
     </div>
 </div>
+
+<!-- Lenis Smooth Scroll Script -->
+<script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+<script>
+    const lenis = new Lenis({
+        autoRaf: true
+    });
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

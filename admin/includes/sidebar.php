@@ -13,6 +13,12 @@ $activeKey = $activePage ?? '';
         <a href="users.php" class="btn btn-pill text-start py-2 w-100 <?php echo $activeKey === 'users' ? 'btn-crimson text-white' : 'btn-outline-light text-dark border-0'; ?>">
             <i class="bi bi-people-fill me-2"></i> Users Management
         </a>
+        <a href="updaters.php" id="sidebar-updaters-link" class="btn btn-pill text-start py-2 w-100 <?php echo $activeKey === 'updaters' ? 'btn-crimson text-white' : 'btn-outline-light text-dark border-0'; ?>" style="display: none;">
+            <i class="bi bi-hospital me-2"></i> Updater Management
+        </a>
+        <a href="superadmin.php" id="sidebar-superadmin-link" class="btn btn-pill text-start py-2 w-100 <?php echo $activeKey === 'superadmin' ? 'btn-crimson text-white' : 'btn-outline-light text-dark border-0'; ?>" style="display: none;">
+            <i class="bi bi-shield-fill-check me-2"></i> Super Admin Panel
+        </a>
         <a href="settings.php" class="btn btn-pill text-start py-2 w-100 <?php echo $activeKey === 'settings' ? 'btn-crimson text-white' : 'btn-outline-light text-dark border-0'; ?>">
             <i class="bi bi-sliders me-2"></i> Command / Settings
         </a>
@@ -38,13 +44,31 @@ document.addEventListener('DOMContentLoaded', function() {
             const user = JSON.parse(userJson);
             const badge = document.getElementById('sidebar-role-badge');
             if (badge) {
-                badge.textContent = user.role.toUpperCase();
+                badge.textContent = user.role === 'superadmin' ? 'SUPER ADMIN' : user.role.toUpperCase();
                 if (user.role === 'updater') {
                     badge.className = 'badge bg-warning text-dark rounded-pill px-3 py-1 text-uppercase';
+                } else if (user.role === 'superadmin') {
+                    badge.className = 'badge bg-dark border border-light text-white rounded-pill px-3 py-1 text-uppercase';
+                } else {
+                    badge.className = 'badge bg-danger rounded-pill px-3 py-1 text-uppercase';
                 }
             }
-            // Hide users management link for non-admin updaters
-            if (user.role !== 'admin') {
+            
+            // Show/hide menu items based on role authority
+            const isSuperadmin = (user.role === 'superadmin');
+            const isAdmin = (user.role === 'admin');
+            
+            if (isAdmin || isSuperadmin) {
+                const updatersLink = document.getElementById('sidebar-updaters-link');
+                if (updatersLink) updatersLink.style.display = 'block';
+            }
+            if (isSuperadmin) {
+                const superadminLink = document.getElementById('sidebar-superadmin-link');
+                if (superadminLink) superadminLink.style.display = 'block';
+            }
+
+            // Hide users management link for non-management roles
+            if (user.role !== 'admin' && user.role !== 'superadmin' && user.role !== 'updater') {
                 const usersLink = document.querySelector('#sidebar-menu a[href="users.php"]');
                 if (usersLink) {
                     usersLink.style.display = 'none';

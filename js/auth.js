@@ -46,10 +46,27 @@ function checkAuth(allowedRoles = []) {
     }
 
     const user = JSON.parse(userJson);
-    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-        // Unauthorized role
-        window.location.href = basePath + 'home.php';
-        return;
+    if (allowedRoles.length > 0) {
+        const roleLevels = {
+            'superadmin': 4,
+            'admin': 3,
+            'updater': 2,
+            'donor': 1,
+            'revoked': 0
+        };
+        const userLevel = roleLevels[user.role] ?? 0;
+        let isAllowed = false;
+        for (const allowedRole of allowedRoles) {
+            const allowedLevel = roleLevels[allowedRole] ?? 999;
+            if (userLevel >= allowedLevel) {
+                isAllowed = true;
+                break;
+            }
+        }
+        if (!isAllowed) {
+            window.location.href = basePath + 'home.php';
+            return;
+        }
     }
 
     return { token, user };

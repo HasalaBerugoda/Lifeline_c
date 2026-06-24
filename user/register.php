@@ -7,7 +7,7 @@ require_once __DIR__ . '/includes/header.php';
 <script>
 if (localStorage.getItem('ll_token')) {
     const user = JSON.parse(localStorage.getItem('ll_user') || '{}');
-    if (user.role === 'admin' || user.role === 'updater') {
+    if (user.role === 'admin' || user.role === 'updater' || user.role === 'superadmin') {
         window.location.href = '../admin/dashboard.php';
     } else {
         window.location.href = 'dashboard.php';

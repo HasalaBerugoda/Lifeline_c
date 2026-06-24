@@ -6,7 +6,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>
 // Restrict to admins and updaters
-const auth = checkAuth(['admin', 'updater']);
+const auth = checkAuth(['admin', 'updater', 'superadmin']);
 </script>
 
 <div class="hero-header">
@@ -258,9 +258,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <td><span class="badge ${badgeClass}">${m.status}</span></td>
                     <td class="text-end">
                         <div class="btn-group" role="group">
-                            <button onclick="updateMessageStatus(${m.id}, 'Read')" class="btn btn-xs btn-outline-secondary btn-pill" title="Mark Read"><i class="bi bi-eye"></i></button>
+                            <button onclick="updateMessageStatus(${m.id}, 'Read')" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" title="Mark Read"><i class="bi bi-eye"></i></button>
                             <button 
-                                class="btn btn-xs btn-outline-success btn-pill reply-btn" 
+                                class="btn btn-sm btn-outline-success rounded-circle reply-btn" 
+                                style="width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center;"
                                 data-id="${m.id}" 
                                 data-email="${m.email}" 
                                 data-subject="${escapeHtml(m.subject)}" 

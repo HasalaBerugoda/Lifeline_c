@@ -12,7 +12,7 @@ $navItems = [
         'label' => 'Dashboard',
         'url' => 'user/dashboard.php',
         'visibility' => 'auth', // Logged in only
-        'roles' => ['donor', 'updater', 'admin']
+        'roles' => ['donor', 'updater', 'admin', 'superadmin']
     ],
     'camps' => [
         'label' => 'Blood Camps',
@@ -23,7 +23,7 @@ $navItems = [
         'label' => 'Command',
         'url' => 'admin/settings.php',
         'visibility' => 'auth', // Logged in only
-        'roles' => ['updater', 'admin']
+        'roles' => ['updater', 'admin', 'superadmin']
     ],
     'analytics' => [
         'label' => 'Analytics',
@@ -34,7 +34,7 @@ $navItems = [
         'label' => 'Admin',
         'url' => 'admin/dashboard.php',
         'visibility' => 'auth', // Logged in only
-        'roles' => ['admin']
+        'roles' => ['admin', 'superadmin']
     ],
     'contact' => [
         'label' => 'Contact',
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const profileLink = dropdownUser.querySelector('a[href*="profile.php"]');
         const dashboardLink = dropdownUser.querySelector('a[href*="dashboard.php"]');
         
-        if (userRole === 'admin' || userRole === 'updater') {
+        if (userRole === 'admin' || userRole === 'updater' || userRole === 'superadmin') {
             if (profileLink) profileLink.href = 'admin/profile.php';
             if (dashboardLink) dashboardLink.href = 'admin/dashboard.php';
         } else {

@@ -232,7 +232,7 @@ elseif ($endpoint === 'contact') {
 // Endpoint: ADMIN DASHBOARD (?endpoint=admin_dashboard)
 // ----------------------------------------------------
 elseif ($endpoint === 'admin_dashboard') {
-    $userPayload = requireAuth(['admin']);
+    $userPayload = requireAuth(['updater']);
     if ($method !== 'GET') {
         http_response_code(405);
         echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
@@ -288,12 +288,26 @@ elseif ($endpoint === 'admin_dashboard') {
 // Endpoint: USERS MANAGEMENT (?endpoint=users)
 // ----------------------------------------------------
 elseif ($endpoint === 'users') {
-    $userPayload = requireAuth(['admin']);
+    $userPayload = requireAuth(['superadmin', 'admin', 'updater']);
     
+    $roleLevels = [
+        'superadmin' => 4,
+        'admin' => 3,
+        'updater' => 2,
+        'donor' => 1,
+        'revoked' => 1
+    ];
+    $currentUserRole = $userPayload['role'];
+    $currentUserLevel = $roleLevels[$currentUserRole] ?? 1;
+
     if ($method === 'GET') {
-        // Fetch all users
+        // Fetch users based on role hierarchy (updaters can only see level 1)
         try {
-            $stmt = $db->query("SELECT id, donor_number, fullName, email, phone, province, district, town, bloodType, role, facility_name, created_at FROM users ORDER BY fullName ASC");
+            if ($currentUserRole === 'updater') {
+                $stmt = $db->query("SELECT id, donor_number, fullName, email, phone, province, district, town, bloodType, role, facility_name, created_at FROM users WHERE role IN ('donor', 'revoked') ORDER BY fullName ASC");
+            } else {
+                $stmt = $db->query("SELECT id, donor_number, fullName, email, phone, province, district, town, bloodType, role, facility_name, created_at FROM users ORDER BY fullName ASC");
+            }
             echo json_encode(['status' => 'success', 'data' => $stmt->fetchAll()]);
         } catch (Exception $e) {
             http_response_code(500);
@@ -306,14 +320,14 @@ elseif ($endpoint === 'users') {
         $role         = trim($data['role'] ?? '');
         $facilityName = trim($data['facility_name'] ?? '');
 
-        if ($targetId <= 0 || !in_array($role, ['admin', 'updater', 'donor', 'revoked'])) {
+        if ($targetId <= 0 || !in_array($role, ['superadmin', 'admin', 'updater', 'donor', 'revoked'])) {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Invalid User ID or role name.']);
             exit;
         }
 
         try {
-            // Get current details for audit
+            // Get current details for validation and audit
             $curStmt = $db->prepare("SELECT fullName, role FROM users WHERE id = ?");
             $curStmt->execute([$targetId]);
             $targetUser = $curStmt->fetch();
@@ -321,6 +335,41 @@ elseif ($endpoint === 'users') {
             if (!$targetUser) {
                 http_response_code(404);
                 echo json_encode(['status' => 'error', 'message' => 'User not found.']);
+                exit;
+            }
+
+            // Enforce role update authorization:
+            // - admin and superadmin can update roles
+            // - updater can only update role if both current role and new role are donor/revoked.
+            if ($currentUserRole !== 'admin' && $currentUserRole !== 'superadmin') {
+                if ($currentUserRole === 'updater') {
+                    $isTargetDonorOrRevoked = in_array($targetUser['role'], ['donor', 'revoked']);
+                    $isNewRoleDonorOrRevoked = in_array($role, ['donor', 'revoked']);
+                    if (!$isTargetDonorOrRevoked || !$isNewRoleDonorOrRevoked) {
+                        http_response_code(403);
+                        echo json_encode(['status' => 'error', 'message' => 'Forbidden: Updaters can only update role between donor and revoked.']);
+                        exit;
+                    }
+                } else {
+                    http_response_code(403);
+                    echo json_encode(['status' => 'error', 'message' => 'Forbidden: You do not have permission to update user roles.']);
+                    exit;
+                }
+            }
+
+            // Enforce hierarchy validation (cannot modify higher or equal rank)
+            $targetUserLevel = $roleLevels[$targetUser['role']] ?? 1;
+            if ($targetUserLevel >= $currentUserLevel) {
+                http_response_code(403);
+                echo json_encode(['status' => 'error', 'message' => 'Forbidden: You cannot modify a user of equal or higher rank.']);
+                exit;
+            }
+
+            // Enforce hierarchy validation (cannot promote to equal or higher rank than self)
+            $newRoleLevel = $roleLevels[$role] ?? 1;
+            if ($newRoleLevel >= $currentUserLevel) {
+                http_response_code(403);
+                echo json_encode(['status' => 'error', 'message' => 'Forbidden: You cannot promote a user to an equal or higher rank than yourself.']);
                 exit;
             }
 
@@ -344,6 +393,11 @@ elseif ($endpoint === 'users') {
             echo json_encode(['status' => 'error', 'message' => 'Update failed: ' . $e->getMessage()]);
         }
     } elseif ($method === 'DELETE') {
+        if ($currentUserRole !== 'admin' && $currentUserRole !== 'superadmin') {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Forbidden: Only admin and super admin can delete user accounts.']);
+            exit;
+        }
         // Delete a user
         $targetId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -356,19 +410,27 @@ elseif ($endpoint === 'users') {
         // Block self-deletion
         if ((int)$userPayload['id'] === $targetId) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Action blocked: You cannot delete your own admin account.']);
+            echo json_encode(['status' => 'error', 'message' => 'Action blocked: You cannot delete your own account.']);
             exit;
         }
 
         try {
-            // Get user details for audit
-            $curStmt = $db->prepare("SELECT fullName FROM users WHERE id = ?");
+            // Get user details for validation and audit
+            $curStmt = $db->prepare("SELECT fullName, role FROM users WHERE id = ?");
             $curStmt->execute([$targetId]);
             $targetUser = $curStmt->fetch();
 
             if (!$targetUser) {
                 http_response_code(404);
                 echo json_encode(['status' => 'error', 'message' => 'User not found.']);
+                exit;
+            }
+
+            // Enforce hierarchy validation (cannot delete higher or equal rank)
+            $targetUserLevel = $roleLevels[$targetUser['role']] ?? 1;
+            if ($targetUserLevel >= $currentUserLevel) {
+                http_response_code(403);
+                echo json_encode(['status' => 'error', 'message' => 'Forbidden: You cannot delete a user of equal or higher rank.']);
                 exit;
             }
 
@@ -390,6 +452,25 @@ elseif ($endpoint === 'users') {
     } else {
         http_response_code(405);
         echo json_encode(['status' => 'error', 'message' => 'Method not allowed for users endpoint.']);
+    }
+}
+
+// ----------------------------------------------------
+// Endpoint: AUDIT LOGS (?endpoint=audit_logs)
+// ----------------------------------------------------
+elseif ($endpoint === 'audit_logs') {
+    $userPayload = requireAuth(['superadmin']);
+    if ($method !== 'GET') {
+        http_response_code(405);
+        echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
+        exit;
+    }
+    try {
+        $stmt = $db->query("SELECT a.*, u.fullName as user_name FROM audit_log a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.id DESC LIMIT 100");
+        echo json_encode(['status' => 'success', 'data' => $stmt->fetchAll()]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
     }
 }
 

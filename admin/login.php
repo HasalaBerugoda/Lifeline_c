@@ -7,7 +7,7 @@ require_once __DIR__ . '/includes/header.php';
 <script>
 if (localStorage.getItem('ll_token')) {
     const user = JSON.parse(localStorage.getItem('ll_user') || '{}');
-    if (user.role === 'admin' || user.role === 'updater') {
+    if (user.role === 'admin' || user.role === 'updater' || user.role === 'superadmin') {
         window.location.href = 'dashboard.php';
     } else {
         window.location.href = '../home.php';
@@ -80,12 +80,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (data.status === 'success') {
                 const role = data.user.role;
-                if (role === 'admin' || role === 'updater') {
+                if (role === 'admin' || role === 'updater' || role === 'superadmin') {
                     localStorage.setItem('ll_token', data.token);
                     localStorage.setItem('ll_user', JSON.stringify(data.user));
                     window.location.href = 'dashboard.php';
                 } else {
-                    throw new Error('Access denied: You must be an admin or updater to log in here.');
+                    throw new Error('Access denied: You must be an admin, updater or super admin to log in here.');
                 }
             } else {
                 throw new Error(data.message || 'Login failed.');

@@ -145,5 +145,19 @@ function requireAuth($allowedRoles = []) {
 }
 
 function in_repeat_role($role, $allowedRoles) {
-    return in_array($role, $allowedRoles);
+    $roleLevels = [
+        'superadmin' => 4,
+        'admin' => 3,
+        'updater' => 2,
+        'donor' => 1,
+        'revoked' => 0
+    ];
+    $userLevel = $roleLevels[$role] ?? 0;
+    foreach ($allowedRoles as $allowedRole) {
+        $allowedLevel = $roleLevels[$allowedRole] ?? 999;
+        if ($userLevel >= $allowedLevel) {
+            return true;
+        }
+    }
+    return false;
 }

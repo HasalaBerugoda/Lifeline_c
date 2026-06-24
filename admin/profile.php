@@ -6,7 +6,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>
 // Restricted to admin and updater roles
-const auth = checkAuth(['admin', 'updater']);
+const auth = checkAuth(['admin', 'updater', 'superadmin']);
 </script>
 
 <div class="hero-header">

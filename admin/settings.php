@@ -6,7 +6,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <script>
 // Allowed for updater and admin roles only
-const auth = checkAuth(['updater', 'admin']);
+const auth = checkAuth(['updater', 'admin', 'superadmin']);
 </script>
 
 <div class="hero-header">
@@ -176,7 +176,36 @@ const auth = checkAuth(['updater', 'admin']);
 
             <!-- Row: Camp Management -->
             <div class="row g-4 mt-3">
-                <!-- Create Camp -->
+                <!-- Camps List with Delete -->
+                <div class="col-lg-7">
+                    <div class="premium-card">
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-table text-danger me-2"></i>Active Campaigns</h3>
+                        <div id="camp-list-alert" class="alert alert-success" style="display: none;"></div>
+                        
+                        <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                            <table class="table table-striped align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Campaign / Date</th>
+                                        <th>Location</th>
+                                        <th>Organizer</th>
+                                        <th>Registered</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="camps-list-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-secondary">
+                                            <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading active campaigns...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Donation Camp -->
                 <div class="col-lg-5">
                     <div class="premium-card">
                         <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-calendar-plus text-danger me-2"></i>Create Donation Camp</h3>
@@ -219,28 +248,30 @@ const auth = checkAuth(['updater', 'admin']);
                         </form>
                     </div>
                 </div>
+            </div>
 
-                <!-- Camps List with Delete -->
+            <!-- Row: Urgent Requests Management -->
+            <div class="row g-4 mt-3">
+                <!-- Urgent Requests List with Actions -->
                 <div class="col-lg-7">
                     <div class="premium-card">
-                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-table text-danger me-2"></i>Active Campaigns</h3>
-                        <div id="camp-list-alert" class="alert alert-success" style="display: none;"></div>
+                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-card-list text-danger me-2"></i>Active Urgent Requests</h3>
+                        <div id="urgent-list-alert" class="alert alert-success" style="display: none;"></div>
                         
                         <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
                             <table class="table table-striped align-middle">
                                 <thead>
                                     <tr>
-                                        <th>Campaign / Date</th>
-                                        <th>Location</th>
-                                        <th>Organizer</th>
-                                        <th>Registered</th>
+                                        <th>Blood Type</th>
+                                        <th>Hospital</th>
+                                        <th>Urgency Level</th>
                                         <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="camps-list-body">
+                                <tbody id="urgent-list-body">
                                     <tr>
-                                        <td colspan="5" class="text-center py-4 text-secondary">
-                                            <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading active campaigns...
+                                        <td colspan="4" class="text-center py-4 text-secondary">
+                                            <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading urgent requests...
                                         </td>
                                     </tr>
                                 </tbody>
@@ -248,10 +279,7 @@ const auth = checkAuth(['updater', 'admin']);
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Row: Urgent Requests Management -->
-            <div class="row g-4 mt-3">
                 <!-- Add/Edit Urgent Request Form -->
                 <div class="col-lg-5">
                     <div class="premium-card">
@@ -301,34 +329,6 @@ const auth = checkAuth(['updater', 'admin']);
                         </form>
                     </div>
                 </div>
-
-                <!-- Urgent Requests List with Actions -->
-                <div class="col-lg-7">
-                    <div class="premium-card">
-                        <h3 class="font-heading text-dark mb-3 border-bottom pb-2"><i class="bi bi-card-list text-danger me-2"></i>Active Urgent Requests</h3>
-                        <div id="urgent-list-alert" class="alert alert-success" style="display: none;"></div>
-                        
-                        <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
-                            <table class="table table-striped align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>Blood Type</th>
-                                        <th>Hospital</th>
-                                        <th>Urgency Level</th>
-                                        <th class="text-end">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="urgent-list-body">
-                                    <tr>
-                                        <td colspan="4" class="text-center py-4 text-secondary">
-                                            <div class="spinner-border spinner-border-sm text-danger me-1"></div> Loading urgent requests...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -372,9 +372,18 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('don-location').value = userObj.facility_name;
     }
     
-    // Set default dates
-    document.getElementById('don-date').value = new Date().toISOString().substring(0, 10);
-    document.getElementById('camp-date').value = new Date().toISOString().substring(0, 10);
+    // Helper to get local YYYY-MM-DD date
+    function getLocalYMD() {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    // Set default dates (fixing timezone bug)
+    document.getElementById('don-date').value = getLocalYMD();
+    document.getElementById('camp-date').value = getLocalYMD();
 
     let currentInventory = {};
     let forecastDemand = {};
@@ -610,7 +619,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 donAlert.style.display = 'block';
                 
                 donForm.reset();
-                document.getElementById('don-date').value = new Date().toISOString().substring(0, 10);
+                document.getElementById('don-date').value = getLocalYMD();
                 if (userObj.facility_name) {
                     document.getElementById('don-location').value = userObj.facility_name;
                 }
@@ -661,7 +670,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 campAlert.style.display = 'block';
 
                 campForm.reset();
-                document.getElementById('camp-date').value = new Date().toISOString().substring(0, 10);
+                document.getElementById('camp-date').value = getLocalYMD();
                 
                 await loadCamps();
             }
@@ -698,7 +707,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 if (camps.length > 0) {
                     camps.forEach(camp => {
                         const tr = document.createElement('tr');
-                        const isDeletable = userObj.role === 'updater' || userObj.role === 'admin';
+                        const isDeletable = userObj.role === 'updater' || userObj.role === 'admin' || userObj.role === 'superadmin';
                         const btnState = isDeletable ? '' : 'disabled';
 
                         tr.innerHTML = `
@@ -713,8 +722,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                                     <i class="bi bi-people-fill me-1"></i> ${camp.registered_count || 0}
                                 </span>
                             </td>
-                            <td class="text-end">
-                                <button onclick="deleteCamp(${camp.id})" class="btn btn-sm btn-outline-danger btn-pill" ${btnState}>
+                            <td class="text-end" style="white-space: nowrap;">
+                                <button onclick="deleteCamp(${camp.id})" class="btn btn-sm btn-outline-danger rounded-circle" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" ${btnState}>
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -869,11 +878,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                             </td>
                             <td><strong class="text-dark">${escapeHtml(hospital)}</strong></td>
                             <td><span class="badge rounded-pill px-3 py-2 ${badgeClass}">${escapeHtml(status)}</span></td>
-                            <td class="text-end">
-                                <button onclick="editUrgentRequest(${req.id}, '${escapeHtml(bg)}', '${escapeHtml(hospital).replace(/'/g, "\\'")}', '${escapeHtml(status)}')" class="btn btn-sm btn-outline-primary btn-pill me-1" title="Edit Request">
+                            <td class="text-end" style="white-space: nowrap;">
+                                <button onclick="editUrgentRequest(${req.id}, '${escapeHtml(bg)}', '${escapeHtml(hospital).replace(/'/g, "\\'")}', '${escapeHtml(status)}')" class="btn btn-sm btn-outline-primary rounded-circle me-1" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" title="Edit Request">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
-                                <button onclick="deleteUrgentRequest(${req.id})" class="btn btn-sm btn-outline-danger btn-pill" title="Delete Request">
+                                <button onclick="deleteUrgentRequest(${req.id})" class="btn btn-sm btn-outline-danger rounded-circle" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" title="Delete Request">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>

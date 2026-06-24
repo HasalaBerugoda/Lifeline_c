@@ -7,6 +7,7 @@ require_once __DIR__ . '/includes/db.php';
 header('Content-Type: text/html; charset=utf-8');
 
 echo "<!DOCTYPE html><html><head><title>LifeLine Setup</title>";
+echo "<link rel='icon' type='image/svg+xml' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path fill=%22%23e63946%22 d=%22M50,5 C50,5 90,45 90,65 C90,85 70,95 50,95 C30,95 10,85 10,65 C10,45 50,5 50,5 Z%22/></svg>'>";
 echo "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>";
 echo "<style>body{background-color:#111827;color:#f9fafb;font-family:sans-serif;} .card{background-color:#1f2937;border:1px solid #374151;color:#f9fafb;}</style>";
 echo "</head><body><div class='container my-5'><h1 class='mb-4 text-danger'>LifeLine System Setup</h1>";
@@ -48,7 +49,7 @@ try {
           town          VARCHAR(50) NOT NULL,
           bloodType     VARCHAR(10) NOT NULL,
           password      VARCHAR(255) NOT NULL,
-          role          ENUM('admin','updater','donor','revoked') DEFAULT 'donor',
+          role          ENUM('superadmin','admin','updater','donor','revoked') DEFAULT 'donor',
           facility_name VARCHAR(150),
           created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -145,6 +146,18 @@ try {
 
     // 4. Seed Users
     $usersToSeed = [
+        [
+            'fullName' => 'Super Administrator',
+            'email' => 'superadmin@lifeline.com',
+            'phone' => '+94770000000',
+            'province' => 'Western',
+            'district' => 'Colombo',
+            'town' => 'Colombo 1',
+            'bloodType' => 'O+',
+            'password' => password_hash('SuperadminPassword123', PASSWORD_BCRYPT),
+            'role' => 'superadmin',
+            'facility_name' => null
+        ],
         [
             'fullName' => 'System Administrator',
             'email' => 'admin@lifeline.com',
@@ -430,6 +443,7 @@ try {
     echo "<table class='table table-dark table-striped table-bordered mt-2' style='max-width: 600px;'>";
     echo "<thead><tr><th>Role</th><th>Email</th><th>Password</th></tr></thead>";
     echo "<tbody>";
+    echo "<tr><td>Super Admin</td><td><code>superadmin@lifeline.com</code></td><td><code>SuperadminPassword123</code></td></tr>";
     echo "<tr><td>Admin</td><td><code>admin@lifeline.com</code></td><td><code>AdminPassword123</code></td></tr>";
     echo "<tr><td>Updater</td><td><code>updater@lifeline.com</code></td><td><code>UpdaterPassword123</code></td></tr>";
     echo "<tr><td>Donor (O+)</td><td><code>donor@lifeline.com</code></td><td><code>DonorPassword123</code></td></tr>";
